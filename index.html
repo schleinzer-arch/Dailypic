@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ONE FRAME</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #FAF9F7;
+      color: #0F0F0F;
+      transition: background 0.35s ease, color 0.35s ease;
+      min-height: 100vh;
+    }
+    body.dark { background: #0F0F0F; color: #F0EDE8; }
+    button { -webkit-tap-highlight-color: transparent; cursor: pointer; }
+
+    /* ── Layout ── */
+    #app {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Header ── */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 40px;
+      border-bottom: 1px solid #EDEAE5;
+      transition: border-color 0.35s ease;
+    }
+    body.dark header { border-color: #222; }
+
+    #logo {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      font-weight: 600;
+    }
+
+    /* ── Filter Bar ── */
+    #filter-bar {
+      display: flex;
+      gap: 28px;
+      align-items: center;
+    }
+    .filter-btn {
+      background: none;
+      border: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      font-weight: 400;
+      color: #999;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s ease, font-weight 0.1s ease;
+    }
+    .filter-btn.active { font-weight: 600; color: #0F0F0F; }
+    body.dark .filter-btn { color: #888; }
+    body.dark .filter-btn.active { color: #FAF9F7; }
+    .filter-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #ccc;
+      display: inline-block;
+      transition: background 0.3s ease;
+    }
+    .filter-btn.active .filter-dot { background: #F2C94C; }
+
+    /* ── Dark toggle ── */
+    #dark-toggle {
+      background: none;
+      border: none;
+      font-size: 14px;
+      color: #999;
+      padding: 0;
+      transition: color 0.2s;
+    }
+    body.dark #dark-toggle { color: #666; }
+
+    /* ── Mobile filter strip ── */
+    #mobile-filter {
+      display: none;
+      padding: 16px 24px;
+      border-bottom: 1px solid #EDEAE5;
+      justify-content: center;
+      transition: border-color 0.35s ease;
+    }
+    body.dark #mobile-filter { border-color: #222; }
+
+    /* ── Main ── */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 60px 40px 40px;
+      max-width: 860px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* ── Challenge ── */
+    #challenge {
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    #challenge.hidden {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    .label-tiny {
+      font-family: 'Inter', sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      color: #B0A99A;
+      text-align: center;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      transition: color 0.35s ease;
+    }
+    body.dark .label-tiny { color: #555; }
+
+    #headline {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(34px, 4.5vw, 56px);
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+      color: #0F0F0F;
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto;
+      transition: color 0.35s ease;
+    }
+    body.dark #headline { color: #F0EDE8; }
+    #headline .accent { /* color set dynamically */ }
+
+    /* ── Motto ── */
+    #motto-wrap {
+      text-align: center;
+      margin-top: 28px;
+    }
+    #motto-quote {
+      font-size: 20px;
+      color: #F2C94C;
+      margin-bottom: 6px;
+    }
+    #motto-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      color: #B0A99A;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      transition: color 0.35s ease;
+    }
+    body.dark #motto-label { color: #555; }
+    #motto-text {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: #0F0F0F;
+      transition: color 0.35s ease;
+    }
+    body.dark #motto-text { color: #F0EDE8; }
+
+    /* ── Meta Row (desktop) ── */
+    #meta-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-top: 1px solid #E8E5E0;
+      border-bottom: 1px solid #E8E5E0;
+      padding: 20px 0;
+      margin-top: 36px;
+      transition: border-color 0.35s ease;
+    }
+    body.dark #meta-row { border-color: #333; }
+    .meta-cell {
+      padding: 0 20px;
+      border-right: 1px solid #E8E5E0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: border-color 0.35s ease;
+    }
+    body.dark .meta-cell { border-color: #333; }
+    .meta-cell:last-child { border-right: none; }
+    .meta-icon-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #B0A99A;
+      transition: color 0.35s ease;
+    }
+    body.dark .meta-icon-row { color: #555; }
+    .meta-cell-label {
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      color: #B0A99A;
+      text-transform: uppercase;
+      transition: color 0.35s ease;
+    }
+    body.dark .meta-cell-label { color: #555; }
+    .meta-cell-value {
+      font-size: 13px;
+      font-weight: 500;
+      color: #1A1A1A;
+      transition: color 0.35s ease;
+    }
+    body.dark .meta-cell-value { color: #E5E0D8; }
+    .meta-cell-sub {
+      font-size: 11px;
+      color: #999;
+      margin-top: 2px;
+      transition: color 0.35s ease;
+    }
+    body.dark .meta-cell-sub { color: #666; }
+    .color-dot {
+      width: 12px; height: 12px; border-radius: 50%;
+      display: inline-block; flex-shrink: 0;
+    }
+
+    /* ── Meta Row (mobile) ── */
+    #meta-mobile {
+      display: none;
+      margin-top: 32px;
+      border-top: 1px solid #E8E5E0;
+      transition: border-color 0.35s ease;
+    }
+    body.dark #meta-mobile { border-color: #333; }
+    .meta-mobile-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 14px 0;
+      border-bottom: 1px solid #F0EDE8;
+      transition: border-color 0.35s ease;
+    }
+    body.dark .meta-mobile-row { border-color: #2A2A2A; }
+    .meta-mobile-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #B0A99A;
+    }
+    body.dark .meta-mobile-left { color: #555; }
+    .meta-mobile-right { text-align: right; }
+
+    /* ── Tip ── */
+    #tip-box {
+      margin-top: 28px;
+      padding: 20px 0;
+      text-align: center;
+    }
+    #tip-label {
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      color: #B0A99A;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      transition: color 0.35s ease;
+    }
+    body.dark #tip-label { color: #555; }
+    #tip-text {
+      font-size: 14px;
+      line-height: 1.7;
+      color: #777;
+      max-width: 400px;
+      margin: 0 auto;
+      font-style: italic;
+      transition: color 0.35s ease;
+    }
+    body.dark #tip-text { color: #888; }
+
+    /* ── Generate Button ── */
+    #gen-wrap { text-align: center; margin-top: 40px; }
+    #gen-btn {
+      background: #0F0F0F;
+      border: 1px solid #0F0F0F;
+      border-radius: 50%;
+      width: 72px; height: 72px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #F2C94C;
+      transition: transform 0.15s ease, background 0.2s ease;
+    }
+    body.dark #gen-btn { background: #1A1A1A; border-color: #444; box-shadow: 0 0 0 1px #333; }
+    #gen-btn:hover { background: #2A2A2A; }
+    body.dark #gen-btn:hover { background: #222; }
+    #gen-btn:active { transform: scale(0.93); }
+    #gen-label {
+      margin-top: 12px;
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      color: #999;
+      transition: color 0.35s ease;
+    }
+    body.dark #gen-label { color: #555; }
+
+    /* ── Footer ── */
+    footer {
+      display: flex;
+      justify-content: space-between;
+      padding: 20px 40px;
+      border-top: 1px solid #EDEAE5;
+      transition: border-color 0.35s ease;
+    }
+    body.dark footer { border-color: #222; }
+    .footer-text {
+      font-size: 10px;
+      color: #C0B9B0;
+      transition: color 0.35s ease;
+    }
+    body.dark .footer-text { color: #444; }
+    .footer-italic { font-style: italic; }
+
+    /* ── Responsive ── */
+    @media (max-width: 699px) {
+      header { padding: 20px 24px; }
+      #desktop-filter { display: none !important; }
+      #mobile-filter { display: flex !important; }
+      main { padding: 40px 24px 24px; max-width: 100%; }
+      #headline { font-size: clamp(26px, 7vw, 36px); }
+      #meta-row { display: none !important; }
+      #meta-mobile { display: block !important; }
+      footer { padding: 16px 24px; }
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- Header -->
+  <header>
+    <span id="logo">ONE FRAME</span>
+    <nav id="filter-bar" id="desktop-filter">
+      <button class="filter-btn" data-filter="minimal">Minimal</button>
+      <button class="filter-btn" data-filter="technisch">Technisch</button>
+      <button class="filter-btn" data-filter="story">Story</button>
+      <button class="filter-btn active" data-filter="zufall">
+        <span class="filter-dot"></span>Zufall
+      </button>
+    </nav>
+    <button id="dark-toggle" aria-label="Dark Mode umschalten">◑</button>
+  </header>
+
+  <!-- Mobile filter -->
+  <div id="mobile-filter">
+    <nav id="filter-bar-mobile" style="display:flex;gap:24px;align-items:center;">
+      <button class="filter-btn" data-filter="minimal">Minimal</button>
+      <button class="filter-btn" data-filter="technisch">Technisch</button>
+      <button class="filter-btn" data-filter="story">Story</button>
+      <button class="filter-btn active" data-filter="zufall">
+        <span class="filter-dot"></span>Zufall
+      </button>
+    </nav>
+  </div>
+
+  <!-- Main -->
+  <main>
+    <div id="challenge">
+
+      <!-- Label -->
+      <div class="label-tiny">Deine Aufgabe</div>
+
+      <!-- Headline -->
+      <h1 id="headline"></h1>
+
+      <!-- Motto -->
+      <div id="motto-wrap">
+        <div id="motto-quote">"</div>
+        <div id="motto-label">Motto</div>
+        <div id="motto-text"></div>
+      </div>
+
+      <!-- Meta desktop -->
+      <div id="meta-row">
+        <div class="meta-cell">
+          <div class="meta-icon-row">
+            <span class="color-dot" id="meta-color-dot"></span>
+            <span class="meta-cell-label">Farbe</span>
+          </div>
+          <div>
+            <div class="meta-cell-value" id="meta-color-val"></div>
+          </div>
+        </div>
+        <div class="meta-cell">
+          <div class="meta-icon-row">
+            <!-- perspective icon -->
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20L12 4L22 20H2Z"/><line x1="7" y1="20" x2="17" y2="20"/></svg>
+            <span class="meta-cell-label">Perspektive</span>
+          </div>
+          <div class="meta-cell-value" id="meta-persp-val"></div>
+        </div>
+        <div class="meta-cell">
+          <div class="meta-icon-row">
+            <!-- aperture icon -->
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="14.31" y1="8" x2="20.05" y2="17.94"/><line x1="9.69" y1="8" x2="21.17" y2="8"/><line x1="7.38" y1="12" x2="13.12" y2="2.06"/><line x1="9.69" y1="16" x2="3.95" y2="6.06"/><line x1="14.31" y1="16" x2="2.83" y2="16"/><line x1="16.62" y1="12" x2="10.88" y2="21.94"/></svg>
+            <span class="meta-cell-label">Technik</span>
+          </div>
+          <div>
+            <div class="meta-cell-value" id="meta-tech-val"></div>
+            <div class="meta-cell-sub" id="meta-tech-sub"></div>
+          </div>
+        </div>
+        <div class="meta-cell">
+          <div class="meta-icon-row">
+            <!-- format icon -->
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+            <span class="meta-cell-label">Format</span>
+          </div>
+          <div class="meta-cell-value" id="meta-fmt-val"></div>
+        </div>
+      </div>
+
+      <!-- Meta mobile -->
+      <div id="meta-mobile">
+        <div class="meta-mobile-row">
+          <div class="meta-mobile-left">
+            <span class="color-dot" id="meta-color-dot-m"></span>
+            <span class="meta-cell-label">Farbe</span>
+          </div>
+          <div class="meta-mobile-right">
+            <div class="meta-cell-value" id="meta-color-val-m"></div>
+          </div>
+        </div>
+        <div class="meta-mobile-row">
+          <div class="meta-mobile-left">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20L12 4L22 20H2Z"/><line x1="7" y1="20" x2="17" y2="20"/></svg>
+            <span class="meta-cell-label">Perspektive</span>
+          </div>
+          <div class="meta-mobile-right">
+            <div class="meta-cell-value" id="meta-persp-val-m"></div>
+          </div>
+        </div>
+        <div class="meta-mobile-row">
+          <div class="meta-mobile-left">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="14.31" y1="8" x2="20.05" y2="17.94"/><line x1="9.69" y1="8" x2="21.17" y2="8"/><line x1="7.38" y1="12" x2="13.12" y2="2.06"/><line x1="9.69" y1="16" x2="3.95" y2="6.06"/><line x1="14.31" y1="16" x2="2.83" y2="16"/><line x1="16.62" y1="12" x2="10.88" y2="21.94"/></svg>
+            <span class="meta-cell-label">Technik</span>
+          </div>
+          <div class="meta-mobile-right">
+            <div class="meta-cell-value" id="meta-tech-val-m"></div>
+            <div class="meta-cell-sub" id="meta-tech-sub-m"></div>
+          </div>
+        </div>
+        <div class="meta-mobile-row">
+          <div class="meta-mobile-left">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+            <span class="meta-cell-label">Format</span>
+          </div>
+          <div class="meta-mobile-right">
+            <div class="meta-cell-value" id="meta-fmt-val-m"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tip -->
+      <div id="tip-box">
+        <div id="tip-label">Tipp</div>
+        <p id="tip-text"></p>
+      </div>
+
+    </div><!-- /#challenge -->
+
+    <!-- Generate button -->
+    <div id="gen-wrap">
+      <button id="gen-btn" aria-label="Neue Aufgabe generieren">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="20" height="20" rx="3"/>
+          <circle cx="8" cy="8" r="1.2" fill="currentColor" stroke="none"/>
+          <circle cx="16" cy="8" r="1.2" fill="currentColor" stroke="none"/>
+          <circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/>
+          <circle cx="8" cy="16" r="1.2" fill="currentColor" stroke="none"/>
+          <circle cx="16" cy="16" r="1.2" fill="currentColor" stroke="none"/>
+        </svg>
+      </button>
+      <div id="gen-label">Neue Aufgabe</div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <span class="footer-text footer-italic">Lass dich inspirieren. Gehe raus. Fotografiere.</span>
+    <span class="footer-text">#oneframe</span>
+  </footer>
+
+</div><!-- /#app -->
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+// ONE FRAME — Generator
+// Ergänze neue Einträge direkt in den Arrays unten.
+// ═══════════════════════════════════════════════════════════════════════════
+
+// ── Motive ─────────────────────────────────────────────────────────────────
+const subjects = [
+  "ein Detail", "eine Spiegelung", "einen Schatten", "eine Linie",
+  "eine Tür", "ein Fenster", "eine Treppe", "eine Bewegung",
+  "eine Silhouette", "ein Muster", "eine Lichtquelle",
+  "etwas Alltägliches", "einen Kontrast", "eine leere Fläche", "eine Spur",
+  "einen Rahmen im Rahmen", "eine Textur", "einen Moment des Wartens",
+];
+
+// ── Farben ──────────────────────────────────────────────────────────────────
+const colors = [
+  { label: "Rot",                hex: "#D64545" },
+  { label: "Blau",               hex: "#3D7BFF" },
+  { label: "Gelb",               hex: "#F2C94C" },
+  { label: "Grün",               hex: "#27AE60" },
+  { label: "Schwarzweiß",        hex: "#1E1E1E" },
+  { label: "warme Farben",       hex: "#E07B39" },
+  { label: "kalte Farben",       hex: "#74A9CF" },
+  { label: "eine dominante Farbe", hex: "#8B5CF6" },
+  { label: "Neon",               hex: "#00CC66" },
+  { label: "Pastell",            hex: "#E8839B" },
+];
+
+// ── Perspektiven ────────────────────────────────────────────────────────────
+const perspectives = [
+  "aus der Froschperspektive", "aus der Vogelperspektive",
+  "auf Augenhöhe", "aus extremer Nähe", "durch etwas hindurch",
+  "mit viel negativem Raum", "streng symmetrisch",
+  "diagonal komponiert", "aus der Hüfte",
+];
+
+// ── Techniken ───────────────────────────────────────────────────────────────
+const techniques = [
+  { label: "Offene Blende",        sub: "z.B. f/2.8",      key: "blur"      },
+  { label: "Geschlossene Blende",  sub: "z.B. f/8",        key: "sharp"     },
+  { label: "Lange Belichtung",     sub: "z.B. 2–10 Sek.",  key: "longexp"   },
+  { label: "Kurze Belichtungszeit",sub: "z.B. 1/1000s",    key: "shortexp"  },
+  { label: "Hoher ISO-Wert",       sub: "z.B. ISO 3200",   key: "highiso"   },
+  { label: "Manueller Fokus",      sub: "",                 key: "mf"        },
+  { label: "Bewegungsunschärfe",   sub: "",                 key: "motion"    },
+  { label: "Hartes Licht",         sub: "",                 key: "hardlight" },
+  { label: "Weiches Licht",        sub: "",                 key: "softlight" },
+];
+
+// ── Formate ─────────────────────────────────────────────────────────────────
+const formats = [
+  "im Hochformat", "im Querformat", "quadratisch gedacht", "frei",
+];
+
+// ── Mottos ──────────────────────────────────────────────────────────────────
+const mottos = [
+  "Stille", "Störung", "Nähe", "Distanz", "Ordnung", "Chaos",
+  "Bewegung", "Warten", "Kälte", "Wärme", "Spuren", "Zufall",
+  "Kontrast", "Leere", "Schwelle", "Augenblick",
+];
+
+// ── Kontextuelle Tipps ───────────────────────────────────────────────────────
+// Schlüssel entspricht technique.key; "default" greift immer als Fallback.
+const tipsByKey = {
+  blur: [
+    "Öffne die Blende weit und achte darauf, was im Fokus bleibt – das ist dein Bild.",
+    "Geh nah ran und lass den Hintergrund in sanfte Unschärfe fallen.",
+  ],
+  sharp: [
+    "Nutze eine kleine Blende, um alles scharf zu halten – von vorne bis hinten.",
+    "Achte auf klare Kanten und vermeide störende Elemente im Bild.",
+  ],
+  longexp: [
+    "Nutze ein Stativ oder lege die Kamera auf einem festen Untergrund ab.",
+    "Beobachte, wie Bewegung im Bild weich wird – Wasser, Licht, Menschen.",
+  ],
+  shortexp: [
+    "Friere Bewegung ein. Suche einen Moment, der normalerweise zu schnell ist.",
+    "Reagiere schnell. Das Bild entsteht in einem Bruchteil einer Sekunde.",
+  ],
+  highiso: [
+    "Lass das Korn zu einem Teil des Bildes werden – bekämpfe es nicht.",
+    "Arbeite bei schwachem Licht und akzeptiere das Rauschen als Stil.",
+  ],
+  mf: [
+    "Fokussiere bewusst – entscheide, was scharf ist und was nicht.",
+    "Nimm dir Zeit. Manueller Fokus zwingt dich zur Langsamkeit.",
+  ],
+  motion: [
+    "Nutze vorhandenes Licht, halte die Kamera ruhig und achte auf Bewegungen im Bild.",
+    "Panne mit dem Motiv mit – lass den Hintergrund unscharf werden.",
+  ],
+  hardlight: [
+    "Suche harte Schatten und nutze sie als Kompositionselement.",
+    "Fotografiere zur Mittagszeit oder unter direktem Kunstlicht.",
+  ],
+  softlight: [
+    "Weiches Licht entsteht an bewölkten Tagen oder in der Nähe von Fenstern.",
+    "Vermeide direkte Sonne – suche schattige, indirekte Lichtquellen.",
+  ],
+  default: [
+    "Geh nah ans Motiv, suche einen ruhigen Hintergrund und lass nur eine Farbe dominieren.",
+    "Fotografiere mehrere Varianten, aber entscheide dich am Ende für das ruhigste Bild.",
+    "Halte die Kamera ruhig und suche nach Wiederholungen im Bild.",
+    "Beobachte erst, dann fotografiere. Das beste Bild entsteht oft im dritten Versuch.",
+    "Lass eine Farbe dominieren und entferne alles, was ablenkt.",
+  ],
+};
+
+// ── Filter-Gewichtungen ──────────────────────────────────────────────────────
+const filterWeights = {
+  zufall: {
+    subjects, colors, perspectives, techniques,
+  },
+  minimal: {
+    subjects: ["ein Detail", "eine leere Fläche", "eine Linie", "einen Schatten", "eine Textur", "ein Muster"],
+    colors: colors.filter(c => ["Schwarzweiß", "Pastell", "eine dominante Farbe"].includes(c.label)),
+    perspectives: ["streng symmetrisch", "mit viel negativem Raum", "auf Augenhöhe", "aus extremer Nähe"],
+    techniques: techniques.filter(t => ["blur", "sharp", "softlight"].includes(t.key)),
+  },
+  technisch: {
+    subjects,
+    colors,
+    perspectives,
+    techniques: techniques.filter(t => ["blur","sharp","longexp","shortexp","highiso","mf","motion"].includes(t.key)),
+  },
+  story: {
+    subjects: ["eine Bewegung","einen Moment des Wartens","eine Silhouette","etwas Alltägliches","eine Spur","eine Lichtquelle"],
+    colors,
+    perspectives: ["auf Augenhöhe","aus der Hüfte","aus extremer Nähe","durch etwas hindurch"],
+    techniques: techniques.filter(t => ["blur","softlight","motion"].includes(t.key)),
+  },
+};
+
+// ── Hilfsfunktionen ──────────────────────────────────────────────────────────
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+function getTip(key) {
+  const pool = tipsByKey[key] || tipsByKey.default;
+  return pick(pool);
+}
+
+function techniquePhrase(tech) {
+  if (tech.label === "Offene Blende")   return "mit offener Blende";
+  if (tech.label === "Lange Belichtung") return "mit langer Belichtung";
+  return "mit " + tech.label.toLowerCase();
+}
+
+function generate(filter) {
+  const w = filterWeights[filter];
+  const color     = pick(w.colors);
+  const technique = pick(w.techniques);
+  return {
+    subject:     pick(w.subjects),
+    color,
+    perspective: pick(w.perspectives),
+    technique,
+    format:      pick(formats),
+    motto:       pick(mottos),
+    tip:         getTip(technique.key),
+  };
+}
+
+// ── DOM-Referenzen ───────────────────────────────────────────────────────────
+const $challenge    = document.getElementById('challenge');
+const $headline     = document.getElementById('headline');
+const $mottoText    = document.getElementById('motto-text');
+const $tipText      = document.getElementById('tip-text');
+
+// desktop meta
+const $colorDot     = document.getElementById('meta-color-dot');
+const $colorVal     = document.getElementById('meta-color-val');
+const $perspVal     = document.getElementById('meta-persp-val');
+const $techVal      = document.getElementById('meta-tech-val');
+const $techSub      = document.getElementById('meta-tech-sub');
+const $fmtVal       = document.getElementById('meta-fmt-val');
+
+// mobile meta
+const $colorDotM    = document.getElementById('meta-color-dot-m');
+const $colorValM    = document.getElementById('meta-color-val-m');
+const $perspValM    = document.getElementById('meta-persp-val-m');
+const $techValM     = document.getElementById('meta-tech-val-m');
+const $techSubM     = document.getElementById('meta-tech-sub-m');
+const $fmtValM      = document.getElementById('meta-fmt-val-m');
+
+// ── Render ───────────────────────────────────────────────────────────────────
+function render(c) {
+  const fmt = c.format.replace("im ", "").replace("gedacht", "").trim();
+
+  // Headline
+  $headline.innerHTML =
+    `Fotografiere heute <span class="accent" style="color:${c.color.hex}">${c.subject}</span> ${c.perspective} ${techniquePhrase(c.technique)}.`;
+
+  // Motto
+  $mottoText.textContent = c.motto;
+
+  // Tip
+  $tipText.textContent = c.tip;
+
+  // Desktop meta
+  $colorDot.style.background = c.color.hex;
+  $colorVal.textContent      = c.color.label;
+  $perspVal.textContent      = c.perspective;
+  $techVal.textContent       = c.technique.label;
+  $techSub.textContent       = c.technique.sub;
+  $fmtVal.textContent        = fmt;
+
+  // Mobile meta
+  $colorDotM.style.background = c.color.hex;
+  $colorValM.textContent      = c.color.label;
+  $perspValM.textContent      = c.perspective;
+  $techValM.textContent       = c.technique.label;
+  $techSubM.textContent       = c.technique.sub;
+  $fmtValM.textContent        = fmt;
+}
+
+// ── State ────────────────────────────────────────────────────────────────────
+let currentFilter = 'zufall';
+
+function roll(filter) {
+  currentFilter = filter || currentFilter;
+  $challenge.classList.add('hidden');
+  setTimeout(() => {
+    render(generate(currentFilter));
+    $challenge.classList.remove('hidden');
+  }, 280);
+}
+
+// ── Filter buttons ───────────────────────────────────────────────────────────
+function setActiveFilter(id) {
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.filter === id);
+  });
+}
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const f = btn.dataset.filter;
+    setActiveFilter(f);
+    roll(f);
+  });
+});
+
+// ── Generate button ───────────────────────────────────────────────────────────
+document.getElementById('gen-btn').addEventListener('click', () => roll());
+
+// ── Dark Mode ────────────────────────────────────────────────────────────────
+const $darkBtn = document.getElementById('dark-toggle');
+let dark = false;
+$darkBtn.addEventListener('click', () => {
+  dark = !dark;
+  document.body.classList.toggle('dark', dark);
+  $darkBtn.textContent = dark ? '☀' : '◑';
+});
+
+// ── Spacebar shortcut ─────────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.code === 'Space' && e.target === document.body) {
+    e.preventDefault();
+    roll();
+  }
+});
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+render(generate('zufall'));
+</script>
+</body>
+</html>

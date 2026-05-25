@@ -6,743 +6,564 @@
   <title>ONE FRAME</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400&display=swap" rel="stylesheet" />
   <style>
 
-    /* ── RESET ── */
+    /* ─────────────────────────────────────────────────────────────
+       BASE
+    ───────────────────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-size: 16px; }
+
+    :root {
+      --bg:        #F0EDE8;
+      --ink:       #1C1917;
+      --ink-muted: #6B6560;
+      --ink-faint: #A8A39D;
+      --accent:    #8B5E3C;
+      --sep:       #D5D0C8;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
     body {
       font-family: 'Inter', -apple-system, sans-serif;
-      background: #F2F0EB;
-      color: #1A1814;
+      font-weight: 300;
+      cursor: default;
+      transition: background 0.6s ease;
+      /* tap anywhere to generate */
+      user-select: none;
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       LAYOUT SHELL
+    ───────────────────────────────────────────────────────────── */
+    #shell {
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      transition: background 0.4s ease, color 0.4s ease;
-      -webkit-font-smoothing: antialiased;
+      padding: 36px 52px 40px;
+      max-width: 860px;
     }
-    body.dark { background: #141210; color: #EDE9E0; }
-    button { cursor: pointer; -webkit-tap-highlight-color: transparent; }
-    svg { display: block; flex-shrink: 0; }
 
-    /* ── HEADER ── */
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 28px 48px;
-    }
+    /* ─────────────────────────────────────────────────────────────
+       LOGO
+    ───────────────────────────────────────────────────────────── */
     #logo {
-      font-size: 10px;
-      font-weight: 500;
-      letter-spacing: 0.22em;
-      color: #1A1814;
-      transition: color 0.4s;
-    }
-    body.dark #logo { color: #EDE9E0; }
-    #header-right { display: flex; align-items: center; gap: 24px; }
-
-    /* ── FILTER PILLS ── */
-    .filter-group { display: flex; gap: 4px; align-items: center; }
-    .filter-btn {
-      background: none;
-      border: none;
       font-family: 'Inter', sans-serif;
-      font-size: 12px;
+      font-size: 10px;
       font-weight: 400;
-      letter-spacing: 0.03em;
-      color: #999;
-      padding: 6px 14px;
-      border-radius: 20px;
-      position: relative;
-      transition: background 0.2s, color 0.2s;
-    }
-    .filter-btn.active { background: #1A1814; color: #F2F0EB; }
-    body.dark .filter-btn { color: #555; }
-    body.dark .filter-btn.active { background: #EDE9E0; color: #141210; }
-    .filter-btn .dot {
-      width: 5px; height: 5px; border-radius: 50%;
-      background: #C9A84C;
-      position: absolute;
-      bottom: 3px; left: 50%;
-      transform: translateX(-50%);
-      display: none;
-    }
-    .filter-btn.active .dot { display: block; }
-
-    /* ── DARK TOGGLE ── */
-    #dark-toggle {
-      background: none; border: none;
-      color: #AAA;
-      display: flex; align-items: center; justify-content: center;
-      padding: 4px;
-      transition: color 0.2s;
-    }
-    #dark-toggle:hover { color: #1A1814; }
-    body.dark #dark-toggle:hover { color: #EDE9E0; }
-
-    /* ── MOBILE FILTER ── */
-    #filter-mobile {
-      display: none;
-      padding: 0 24px 20px;
-      gap: 4px;
+      letter-spacing: 0.24em;
+      color: var(--ink-muted);
+      text-transform: uppercase;
+      margin-bottom: 0;
+      flex-shrink: 0;
     }
 
-    /* ── MAIN ── */
-    main {
+    /* ─────────────────────────────────────────────────────────────
+       MAIN CONTENT — vertically centered in remaining space
+    ───────────────────────────────────────────────────────────── */
+    #content {
       flex: 1;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      padding: 16px 48px 48px;
-      max-width: 800px;
-      width: 100%;
-      margin: 0 auto;
+      padding: 60px 0 20px;
     }
 
-    /* ── CHALLENGE FADE ── */
-    #challenge {
+    /* ─────────────────────────────────────────────────────────────
+       PROMPT — the core sentence
+       Fade + slight rise on transition
+    ───────────────────────────────────────────────────────────── */
+    #prompt-wrap {
       opacity: 1;
       transform: translateY(0);
-      transition: opacity 0.32s ease, transform 0.32s ease;
+      transition: opacity 0.5s ease, transform 0.5s ease;
     }
-    #challenge.out { opacity: 0; transform: translateY(14px); }
+    #prompt-wrap.out {
+      opacity: 0;
+      transform: translateY(16px);
+    }
 
-    /* ── EYEBROW ── */
-    .eyebrow {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 22px;
-    }
-    .eyebrow-line {
-      width: 28px; height: 1.5px;
-      background: #C9A84C;
-    }
-    .eyebrow-text {
-      font-size: 9px;
-      font-weight: 500;
-      letter-spacing: 0.22em;
-      color: #999;
-      text-transform: uppercase;
-    }
-    body.dark .eyebrow-text { color: #555; }
-
-    /* ── HEADLINE ── */
-    #headline {
+    #prompt {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: clamp(40px, 6.2vw, 72px);
-      font-weight: 600;
-      line-height: 1.12;
-      letter-spacing: -0.01em;
-      color: #1A1814;
-      margin-bottom: 40px;
-      transition: color 0.4s;
-    }
-    body.dark #headline { color: #EDE9E0; }
-    #headline em { font-style: italic; font-weight: 400; }
-
-    /* ── MOOD ── */
-    #mood-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 14px;
-    }
-    .mood-icon {
-      color: #C9A84C;
-      font-family: Georgia, serif;
-      font-size: 26px;
-      line-height: 1;
-      margin-top: -6px;
-    }
-    #mood-label {
-      font-size: 11px;
+      font-size: clamp(38px, 6vw, 72px);
       font-weight: 500;
-      letter-spacing: 0.16em;
-      color: #1A1814;
-      text-transform: uppercase;
-      transition: color 0.4s;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 36px;
     }
-    body.dark #mood-label { color: #EDE9E0; }
 
-    /* ── TIP (desktop) ── */
-    #tip-text {
-      font-size: 15px;
-      font-weight: 300;
-      line-height: 1.7;
-      color: #5A5650;
-      max-width: 360px;
-      margin-bottom: 48px;
-      transition: color 0.4s;
+    /* ─────────────────────────────────────────────────────────────
+       SEPARATOR — short em-dash style line (from moodboard)
+    ───────────────────────────────────────────────────────────── */
+    .rule {
+      width: 32px;
+      height: 1.5px;
+      background: var(--ink-muted);
+      margin-bottom: 28px;
+      opacity: 0.5;
     }
-    body.dark #tip-text { color: #888; }
 
-    /* ── SEPARATOR ── */
-    .sep {
-      width: 100%; height: 1px;
-      background: #DDD9D0;
-      margin-bottom: 32px;
-      transition: background 0.4s;
-    }
-    body.dark .sep { background: #292520; }
-
-    /* ── META ROW (desktop) ── */
-    #meta-row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
+    /* ─────────────────────────────────────────────────────────────
+       REFLECTION NOTE — the quiet tip
+    ───────────────────────────────────────────────────────────── */
+    #reflection {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(16px, 2vw, 20px);
+      font-weight: 400;
+      font-style: normal;
+      line-height: 1.55;
+      color: var(--ink-muted);
+      max-width: 420px;
       margin-bottom: 52px;
     }
-    .meta-cell { display: flex; flex-direction: column; gap: 7px; padding-right: 16px; }
-    .meta-cell-icon { color: #AAA; transition: color 0.4s; }
-    body.dark .meta-cell-icon { color: #555; }
-    .meta-cell-label {
-      font-size: 8px;
-      letter-spacing: 0.16em;
-      color: #BBB;
-      text-transform: uppercase;
-      font-weight: 500;
-      transition: color 0.4s;
+
+    /* ─────────────────────────────────────────────────────────────
+       QUOTE BLOCK — occasional literary thought
+       Only shown ~40% of the time
+    ───────────────────────────────────────────────────────────── */
+    #quote-block {
+      margin-bottom: 64px;
+      max-width: 400px;
     }
-    body.dark .meta-cell-label { color: #444; }
-    .meta-cell-value {
-      font-size: 13px;
+    #quote-block.hidden { display: none; }
+
+    #quote-mark {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 28px;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 12px;
+      opacity: 0.85;
+    }
+
+    #quote-text {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(15px, 1.8vw, 18px);
       font-weight: 400;
-      color: #1A1814;
-      transition: color 0.4s;
+      font-style: italic;
+      line-height: 1.65;
+      color: var(--ink-muted);
+      margin-bottom: 14px;
     }
-    body.dark .meta-cell-value { color: #C8C2B4; }
 
-    /* ── META CARDS (mobile 2×2) ── */
-    #meta-mobile {
-      display: none;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 32px;
-    }
-    .meta-card {
-      background: #E8E5DE;
-      border-radius: 12px;
-      padding: 14px 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      transition: background 0.4s;
-    }
-    body.dark .meta-card { background: #1D1B18; }
-    .meta-card-icon { color: #AAA; }
-    body.dark .meta-card-icon { color: #444; }
-    .meta-card-value {
-      font-size: 13px;
-      color: #1A1814;
+    #quote-author {
+      font-family: 'Inter', sans-serif;
+      font-size: 9px;
       font-weight: 400;
-      transition: color 0.4s;
-    }
-    body.dark .meta-card-value { color: #B8B2A4; }
-
-    /* ── TIP (mobile) ── */
-    #tip-mobile { display: none; margin-bottom: 40px; }
-    .tip-label {
-      font-size: 8px;
-      letter-spacing: 0.18em;
-      color: #BBB;
+      letter-spacing: 0.2em;
+      color: var(--ink-faint);
       text-transform: uppercase;
-      font-weight: 500;
-      margin-bottom: 10px;
-      transition: color 0.4s;
     }
-    body.dark .tip-label { color: #444; }
-    .tip-body {
-      font-size: 14px;
-      font-weight: 300;
-      line-height: 1.7;
-      color: #5A5650;
-      transition: color 0.4s;
-    }
-    body.dark .tip-body { color: #777; }
+    #quote-author::before { content: "— "; }
 
-    /* ── GENERATE BUTTON ── */
-    #gen-wrap {
+    /* ─────────────────────────────────────────────────────────────
+       INTERACTION HINT — subtle arrow circle (from moodboard)
+    ───────────────────────────────────────────────────────────── */
+    #footer {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 14px;
+      flex-shrink: 0;
+      padding-top: 8px;
     }
-    #gen-btn {
-      width: 72px; height: 72px;
+
+    #next-btn {
+      width: 52px;
+      height: 52px;
       border-radius: 50%;
-      background: #1A1814;
-      border: none;
+      border: 1px solid var(--ink-muted);
+      background: transparent;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #C9A84C;
-      box-shadow: 0 0 0 7px rgba(201,168,76,0.13);
-      transition: transform 0.18s ease, box-shadow 0.2s ease, background 0.4s;
+      cursor: pointer;
+      opacity: 0.45;
+      transition: opacity 0.25s ease, transform 0.2s ease, border-color 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
     }
-    body.dark #gen-btn {
-      background: #EDE9E0;
-      box-shadow: 0 0 0 7px rgba(201,168,76,0.10);
-    }
-    #gen-btn:hover {
-      transform: scale(1.07);
-      box-shadow: 0 0 0 12px rgba(201,168,76,0.16);
-    }
-    #gen-btn:active { transform: scale(0.93); }
-    #gen-label {
-      font-size: 9px;
-      letter-spacing: 0.22em;
-      color: #BBB;
-      text-transform: uppercase;
-      transition: color 0.4s;
-    }
-    body.dark #gen-label { color: #444; }
+    #next-btn:hover { opacity: 0.85; transform: scale(1.06); }
+    #next-btn:active { transform: scale(0.93); opacity: 1; }
+    #next-btn svg { color: var(--ink); }
 
-    /* ── FOOTER ── */
-    footer {
-      display: flex;
-      justify-content: space-between;
-      padding: 24px 48px;
+    /* small dot below button — pagination feel */
+    #dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--ink);
+      opacity: 0.2;
     }
-    .f-quote {
-      font-size: 10px;
-      font-style: italic;
-      color: #BBB;
-      transition: color 0.4s;
-    }
-    body.dark .f-quote { color: #3A3632; }
-    .f-tag {
-      font-size: 10px;
-      letter-spacing: 0.08em;
-      color: #BBB;
-      transition: color 0.4s;
-    }
-    body.dark .f-tag { color: #3A3632; }
 
-    /* ── RESPONSIVE ── */
-    @media (max-width: 680px) {
-      header { padding: 22px 24px 14px; }
-      #filter-desktop { display: none !important; }
-      #filter-mobile { display: flex !important; }
-      main { padding: 4px 24px 40px; max-width: 100%; }
-      #headline { font-size: clamp(34px, 9vw, 50px); margin-bottom: 24px; }
-      #tip-text { display: none; }
-      #mood-row { margin-bottom: 24px; }
-      .sep { margin-bottom: 20px; }
-      #meta-row { display: none; }
-      #meta-mobile { display: grid; }
-      #tip-mobile { display: block; }
-      footer { padding: 18px 24px; }
+    /* ─────────────────────────────────────────────────────────────
+       MOOD TINT — very subtle background shift per prompt mood
+       Applied via CSS custom property on #shell
+    ───────────────────────────────────────────────────────────── */
+    #shell { transition: background 0.8s ease; }
+
+    /* ─────────────────────────────────────────────────────────────
+       RESPONSIVE
+    ───────────────────────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      #shell { padding: 28px 32px 32px; }
+      #content { padding: 48px 0 16px; }
+      #prompt { margin-bottom: 28px; }
+      #reflection { margin-bottom: 40px; }
+      #quote-block { margin-bottom: 48px; }
+    }
+
+    @media (max-width: 380px) {
+      #shell { padding: 24px 24px 28px; }
     }
 
   </style>
 </head>
 <body>
 
-<!-- ── HEADER ── -->
-<header>
-  <span id="logo">ONE FRAME</span>
-  <div id="header-right">
-    <nav class="filter-group" id="filter-desktop">
-      <button class="filter-btn active" data-f="zufall">Zufall<span class="dot"></span></button>
-      <button class="filter-btn" data-f="minimal">Minimal</button>
-      <button class="filter-btn" data-f="story">Story</button>
-      <button class="filter-btn" data-f="urban">Urban</button>
-    </nav>
-    <button id="dark-toggle" aria-label="Dark Mode">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="4"/>
-        <line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/>
-        <line x1="4.93" y1="4.93" x2="7.05" y2="7.05"/><line x1="16.95" y1="16.95" x2="19.07" y2="19.07"/>
-        <line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/>
-        <line x1="4.93" y1="19.07" x2="7.05" y2="16.95"/><line x1="16.95" y1="7.05" x2="19.07" y2="4.93"/>
-      </svg>
-    </button>
-  </div>
-</header>
+<div id="shell">
 
-<!-- Mobile filter -->
-<nav class="filter-group" id="filter-mobile">
-  <button class="filter-btn active" data-f="zufall">Zufall<span class="dot"></span></button>
-  <button class="filter-btn" data-f="minimal">Minimal</button>
-  <button class="filter-btn" data-f="story">Story</button>
-  <button class="filter-btn" data-f="urban">Urban</button>
-</nav>
+  <!-- Logo -->
+  <div id="logo">One Frame</div>
 
-<!-- ── MAIN ── -->
-<main>
-  <div id="challenge">
+  <!-- Main content -->
+  <div id="content">
+    <div id="prompt-wrap">
 
-    <div class="eyebrow">
-      <div class="eyebrow-line"></div>
-      <div class="eyebrow-text">Fotografiere heute</div>
+      <!-- The prompt sentence -->
+      <p id="prompt"></p>
+
+      <!-- Short horizontal rule -->
+      <div class="rule"></div>
+
+      <!-- Reflective tip -->
+      <p id="reflection"></p>
+
+      <!-- Occasional literary quote -->
+      <div id="quote-block">
+        <div id="quote-mark">"</div>
+        <p id="quote-text"></p>
+        <span id="quote-author"></span>
+      </div>
+
     </div>
-
-    <h1 id="headline"></h1>
-
-    <div id="mood-row">
-      <span class="mood-icon">"</span>
-      <span id="mood-label"></span>
-    </div>
-
-    <!-- Tip desktop -->
-    <p id="tip-text"></p>
-
-    <div class="sep"></div>
-
-    <!-- Meta desktop 4-col -->
-    <div id="meta-row">
-      <div class="meta-cell">
-        <div class="meta-cell-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="4"/>
-            <line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/>
-            <line x1="4.93" y1="4.93" x2="7.05" y2="7.05"/><line x1="16.95" y1="16.95" x2="19.07" y2="19.07"/>
-            <line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/>
-          </svg>
-        </div>
-        <span class="meta-cell-label">Licht</span>
-        <span class="meta-cell-value" id="d-light"></span>
-      </div>
-      <div class="meta-cell">
-        <div class="meta-cell-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/>
-          </svg>
-        </div>
-        <span class="meta-cell-label">Perspektive</span>
-        <span class="meta-cell-value" id="d-persp"></span>
-      </div>
-      <div class="meta-cell">
-        <div class="meta-cell-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="3 7 3 3 7 3"/><polyline points="17 3 21 3 21 7"/>
-            <polyline points="21 17 21 21 17 21"/><polyline points="7 21 3 21 3 17"/>
-          </svg>
-        </div>
-        <span class="meta-cell-label">Komposition</span>
-        <span class="meta-cell-value" id="d-comp"></span>
-      </div>
-      <div class="meta-cell">
-        <div class="meta-cell-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M2 12c2-4 4-6 6-6s4 4 6 4 4-4 6-4"/>
-            <path d="M2 17c2-4 4-6 6-6s4 4 6 4 4-4 6-4" opacity=".4"/>
-          </svg>
-        </div>
-        <span class="meta-cell-label">Stimmung</span>
-        <span class="meta-cell-value" id="d-mood"></span>
-      </div>
-    </div>
-
-    <!-- Meta mobile 2×2 -->
-    <div id="meta-mobile">
-      <div class="meta-card">
-        <div class="meta-card-icon">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="4"/>
-            <line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/>
-            <line x1="4.93" y1="4.93" x2="7.05" y2="7.05"/><line x1="16.95" y1="16.95" x2="19.07" y2="19.07"/>
-            <line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/>
-          </svg>
-        </div>
-        <span class="meta-card-value" id="m-light"></span>
-      </div>
-      <div class="meta-card">
-        <div class="meta-card-icon">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/>
-          </svg>
-        </div>
-        <span class="meta-card-value" id="m-persp"></span>
-      </div>
-      <div class="meta-card">
-        <div class="meta-card-icon">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="3 7 3 3 7 3"/><polyline points="17 3 21 3 21 7"/>
-            <polyline points="21 17 21 21 17 21"/><polyline points="7 21 3 21 3 17"/>
-          </svg>
-        </div>
-        <span class="meta-card-value" id="m-comp"></span>
-      </div>
-      <div class="meta-card">
-        <div class="meta-card-icon">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M2 12c2-4 4-6 6-6s4 4 6 4 4-4 6-4"/>
-          </svg>
-        </div>
-        <span class="meta-card-value" id="m-mood"></span>
-      </div>
-    </div>
-
-    <!-- Tip mobile -->
-    <div id="tip-mobile">
-      <div class="tip-label">Tipp</div>
-      <div class="tip-body" id="m-tip"></div>
-    </div>
-
-  </div><!-- /#challenge -->
-
-  <!-- Generate button -->
-  <div id="gen-wrap">
-    <button id="gen-btn" aria-label="Neue Aufgabe generieren">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 2l1.6 7.8L21 11l-7.4 1.2L12 20l-1.6-7.8L3 11l7.4-1.2Z"/>
-      </svg>
-    </button>
-    <span id="gen-label">Neue Aufgabe</span>
   </div>
 
-</main>
+  <!-- Subtle interaction footer -->
+  <div id="footer">
+    <button id="next-btn" aria-label="Neue Aufgabe">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="1.4"
+           stroke-linecap="round" stroke-linejoin="round">
+        <line x1="5" y1="12" x2="19" y2="12"/>
+        <polyline points="13 6 19 12 13 18"/>
+      </svg>
+    </button>
+    <div id="dot"></div>
+  </div>
 
-<!-- ── FOOTER ── -->
-<footer>
-  <span class="f-quote">Gutes Sehen beginnt mit Achtsamkeit.</span>
-  <span class="f-tag">#oneframe</span>
-</footer>
+</div>
 
-<!-- ═══════════════════════════════════════════════════════════════════════
-  GENERATOR — edit arrays below to add new prompts
-════════════════════════════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════════════════════════════
+  GENERATOR
+  All data lives here. Add entries to any array to extend the app.
+════════════════════════════════════════════════════════════════════ -->
 <script>
 'use strict';
 
-// ── SUBJECTS — add new subjects here ─────────────────────────────────────────
+// ── SUBJECTS ─────────────────────────────────────────────────────────────────
+// What to photograph. Add new subjects freely.
 const subjects = [
-  "eine Spiegelung","einen Schatten","eine Linie","eine Struktur",
-  "eine Bewegung","eine Lichtquelle","ein Detail","eine Silhouette",
-  "ein Muster","eine leere Fläche","einen Übergang","einen Kontrast",
-  "eine Form","etwas Alltägliches","eine Textur",
+  "eine Spiegelung",
+  "einen Schatten",
+  "eine Linie",
+  "eine Struktur",
+  "eine Bewegung",
+  "eine Lichtquelle",
+  "ein Detail",
+  "eine Silhouette",
+  "ein Muster",
+  "eine leere Fläche",
+  "einen Übergang",
+  "einen Kontrast",
+  "eine Form",
+  "etwas Alltägliches",
+  "eine Textur",
 ];
 
-// ── LIGHTINGS — add new lighting types here ───────────────────────────────────
+// ── LIGHTINGS ────────────────────────────────────────────────────────────────
+// Each entry: the phrase as it appears in the sentence + a mood key.
+// mood key controls the subtle background tint.
 const lightings = [
-  { label:"kaltem Licht",        short:"Kaltes Licht",       key:"cold"       },
-  { label:"warmem Licht",        short:"Warmes Licht",       key:"warm"       },
-  { label:"Gegenlicht",          short:"Gegenlicht",         key:"backlight"  },
-  { label:"diffusem Licht",      short:"Diffuses Licht",     key:"diffuse"    },
-  { label:"Neonlicht",           short:"Neonlicht",          key:"neon"       },
-  { label:"künstlichem Licht",   short:"Künstl. Licht",      key:"artificial" },
-  { label:"hartem Licht",        short:"Hartes Licht",       key:"hard"       },
-  { label:"weichem Licht",       short:"Weiches Licht",      key:"soft"       },
-  { label:"Morgenlicht",         short:"Morgenlicht",        key:"morning"    },
-  { label:"Abendlicht",          short:"Abendlicht",         key:"evening"    },
+  { phrase: "im kalten Morgenlicht",   mood: "cold"    },
+  { phrase: "im warmen Abendlicht",    mood: "warm"    },
+  { phrase: "im Gegenlicht",           mood: "neutral" },
+  { phrase: "im diffusen Licht",       mood: "neutral" },
+  { phrase: "im Neonlicht",            mood: "cool"    },
+  { phrase: "im künstlichen Licht",    mood: "neutral" },
+  { phrase: "im harten Mittagslicht",  mood: "warm"    },
+  { phrase: "im weichen Licht",        mood: "neutral" },
+  { phrase: "im ersten Morgenlicht",   mood: "warm"    },
+  { phrase: "im letzten Tageslicht",   mood: "warm"    },
 ];
 
-// ── PERSPECTIVES — add new perspectives here ──────────────────────────────────
+// ── PERSPECTIVES ──────────────────────────────────────────────────────────────
+// Add new perspectives below.
 const perspectives = [
-  { label:"aus der Froschperspektive", short:"Froschperspektive", key:"frog"    },
-  { label:"aus der Vogelperspektive",  short:"Vogelperspektive",  key:"bird"    },
-  { label:"auf Augenhöhe",             short:"Auf Augenhöhe",     key:"eye"     },
-  { label:"aus extremer Nähe",         short:"Extreme Nähe",      key:"close"   },
-  { label:"durch etwas hindurch",      short:"Durch etwas hindurch", key:"through"},
-  { label:"mit viel Abstand",          short:"Viel Abstand",      key:"far"     },
-  { label:"diagonal",                  short:"Diagonal",          key:"diag"    },
-  { label:"symmetrisch",               short:"Symmetrisch",       key:"sym"     },
-  { label:"aus der Hüfte",             short:"Aus der Hüfte",     key:"hip"     },
+  "aus der Froschperspektive",
+  "aus der Vogelperspektive",
+  "auf Augenhöhe",
+  "aus extremer Nähe",
+  "durch etwas hindurch",
+  "mit viel Abstand",
+  "diagonal komponiert",
+  "symmetrisch",
+  "aus der Hüfte",
 ];
 
-// ── COMPOSITIONS — add new compositions here ──────────────────────────────────
+// ── COMPOSITIONS ──────────────────────────────────────────────────────────────
+// Add new compositions below.
 const compositions = [
-  { label:"mit viel negativem Raum",        short:"Negativer Raum",   key:"negative"  },
-  { label:"mit Symmetrie",                  short:"Symmetrie",         key:"symmetry"  },
-  { label:"mit diagonalen Linien",          short:"Diagonale Linien",  key:"diagonal"  },
-  { label:"mit minimalistischem Aufbau",    short:"Minimalistisch",    key:"minimal"   },
-  { label:"mit Vordergrund und Hintergrund",short:"Tiefenstaffel.",    key:"layers"    },
-  { label:"mit Wiederholungen",             short:"Wiederholungen",    key:"repeat"    },
-  { label:"mit natürlichem Rahmen",         short:"Natürl. Rahmen",    key:"frame"     },
-  { label:"mit Isolation",                  short:"Isolation",         key:"isolation" },
-  { label:"mit zentraler Komposition",      short:"Zentral",           key:"central"   },
-  { label:"mit asymmetrischer Balance",     short:"Asymmetrie",        key:"asymmetry" },
+  "mit viel negativem Raum",
+  "mit Symmetrie",
+  "mit diagonalen Linien",
+  "mit minimalistischem Bildaufbau",
+  "mit Vordergrund und Hintergrund",
+  "mit Wiederholungen",
+  "mit natürlichem Rahmen",
+  "mit Isolation",
+  "mit zentraler Komposition",
+  "mit asymmetrischer Balance",
 ];
 
-// ── MOODS — add new moods here ────────────────────────────────────────────────
-const moods = [
-  "Ruhe","Distanz","Ordnung","Chaos","Bewegung",
-  "Warten","Einsamkeit","Wärme","Kälte","Stille",
-  "Urbanität","Nostalgie","Melancholie","Spannung",
+// ── REFLECTIONS ───────────────────────────────────────────────────────────────
+// Quiet tips. Feel like handwritten notes, not instructions.
+// Add new tips freely — keep them short and calm.
+const reflections = [
+  "Beobachte zuerst das Licht,\nbevor du fotografierst.",
+  "Lass große Flächen leer und\nkonzentriere dich auf ein einziges Element.",
+  "Suche nach ruhigen Formen\nund vermeide Ablenkungen.",
+  "Achte darauf,\nwie Schatten das Bild verändern.",
+  "Halte das Motiv klein\nund gib der Umgebung Raum.",
+  "Geh näher als du denkst.\nDann noch einen Schritt weiter.",
+  "Warte, bis das Licht\ngenau richtig liegt.",
+  "Weniger ist fast immer mehr.",
+  "Mach einen Schritt zurück.\nBeobachte das Ganze.",
+  "Suche nach dem einen Moment\nder Stille im Bild.",
+  "Atme einmal durch,\ndann drücke ab.",
+  "Lass dich von Licht leiten,\nnicht von Motiven.",
 ];
 
-// ── TIP SYSTEM ────────────────────────────────────────────────────────────────
-// Key matches lighting.key, perspective.key or composition.key.
-// Add new keys or extend existing arrays freely.
-const tips = {
-  hard:       ["Achte bewusst auf Schatten und nutze harte Kontraste als Gestaltungsmittel.",
-               "Hartes Licht erzeugt scharfe Schatten – suche sie gezielt im Bild."],
-  cold:       ["Kaltes Licht wirkt distanziert – halte das Motiv klein und gib dem Raum Gewicht.",
-               "Suche nach blauen Tönen und nutze sie als Stimmungsträger."],
-  warm:       ["Warmes Licht lädt ein – suche Momente, in denen es auf Oberflächen liegt.",
-               "Fotografiere kurz nach Sonnenauf- oder -untergang im goldenen Licht."],
-  backlight:  ["Nutze Gegenlicht für Silhouetten – positioniere dein Motiv vor der Lichtquelle.",
-               "Achte auf Lens-Flare als bewusstes Kompositionselement."],
-  diffuse:    ["Diffuses Licht ist weich und gleichmäßig – ideal für Texturen und ruhige Details.",
-               "Bewölkte Tage sind perfekt für tonige, atmosphärische Aufnahmen."],
-  neon:       ["Suche nach Reflexionen auf nassen Oberflächen – sie verdoppeln das Licht.",
-               "Neonlicht und Nacht: halte nach Kontrasten zwischen Licht und Dunkel Ausschau."],
-  artificial: ["Künstliches Licht erzeugt Farbstiche – nutze sie bewusst als Stilmittel.",
-               "Achte auf die Mischung verschiedener Lichtquellen im selben Bild."],
-  soft:       ["Weiches Licht verzeiht viel – konzentriere dich auf Komposition und Inhalt.",
-               "Suche Fenster oder offene Schatten als natürliche Softboxen."],
-  morning:    ["Morgenlicht ist kurz und kostbar – sei früh da, beobachte zuerst.",
-               "Das erste Licht legt lange Schatten – nutze sie als Struktur im Bild."],
-  evening:    ["Abendlicht ist warm und tief – suche Gegenlicht und lange Schatten.",
-               "Die Stunde vor Sonnenuntergang gehört dir – nutze sie vollständig."],
-  negative:   ["Lass große Flächen leer und reduziere das Bild auf ein einziges Element.",
-               "Halte das Motiv klein im Bild und gib der Umgebung bewusst Raum."],
-  frame:      ["Nutze Fenster, Türen oder Äste, um dein Motiv einzurahmen.",
-               "Natürliche Rahmen leiten das Auge – suche sie aktiv im Bild."],
-  close:      ["Aus extremer Nähe zeigen sich Texturen, die sonst unsichtbar bleiben.",
-               "Geh näher als du denkst – und dann noch einen Schritt weiter."],
-  through:    ["Nutze Reflexionen oder Glasflächen für zusätzliche Tiefe.",
-               "Was liegt hinter dem Vordergrund? Nutze es als Bildebene."],
-  sym:        ["Symmetrie wirkt stark – suche sie in Architektur, Wasser, Schatten.",
-               "Ein winziger Versatz zerstört Symmetrie – sei präzise."],
-  repeat:     ["Suche nach Wiederholungen und ruhigen Formen im Alltag.",
-               "Muster entstehen oft erst, wenn man einen Schritt zurücktritt."],
-  default:    [
-    "Beobachte zuerst das Licht, bevor du fotografierst.",
-    "Suche nach Linien, die dein Bild leiten.",
-    "Lass den Himmel – oder eine große Fläche – Raum zum Atmen.",
-    "Einfaches Motiv, starke Wirkung – reduziere, bis nichts mehr fehlt.",
-    "Details erzählen oft die besten Geschichten.",
-    "Mach einen Schritt zurück. Dann noch einen.",
-    "Beobachte zuerst. Dann drücke ab.",
-  ],
-};
+// ── QUOTES ────────────────────────────────────────────────────────────────────
+// Real quotes from photographers, writers, filmmakers.
+// Shown approximately 40% of the time.
+// NEVER use generated or fake quotes.
+// Add new entries with { text, author }.
+const quotes = [
+  {
+    text: "There are things nobody would see\nif I didn't photograph them.",
+    author: "Diane Arbus",
+  },
+  {
+    text: "I don't pay attention to the world\nenough except through my camera.",
+    author: "Saul Leiter",
+  },
+  {
+    text: "Photography is a way of feeling,\nof touching, of loving.",
+    author: "Aaron Siskind",
+  },
+  {
+    text: "I only know how to approach a place\nby walking.",
+    author: "Saul Leiter",
+  },
+  {
+    text: "A photograph is a secret\nabout a secret.",
+    author: "Diane Arbus",
+  },
+  {
+    text: "The camera is an excuse\nto be someplace you otherwise don't belong.",
+    author: "Susan Meiselas",
+  },
+  {
+    text: "Photography is not about cameras,\ngadgets and gizmos. It's about light and thought.",
+    author: "Andreas Feininger",
+  },
+  {
+    text: "I am always mentally photographing\neverything as practice.",
+    author: "Minor White",
+  },
+  {
+    text: "There is nothing worse\nthan a sharp image of a fuzzy concept.",
+    author: "Ansel Adams",
+  },
+  {
+    text: "The negative is the equivalent\nof the composer's score.",
+    author: "Ansel Adams",
+  },
+  {
+    text: "In photography there are no shadows\nthat cannot be illuminated.",
+    author: "August Sander",
+  },
+  {
+    text: "Light makes photography.\nEmbrace light. Admire it. Love it.",
+    author: "George Eastman",
+  },
+  {
+    text: "You don't take a photograph,\nyou make it.",
+    author: "Ansel Adams",
+  },
+  {
+    text: "The best thing about a picture\nis that it never changes,\neven when the people in it do.",
+    author: "Andy Warhol",
+  },
+  {
+    text: "To me, photography is an art\nof observation.",
+    author: "Elliott Erwitt",
+  },
+];
 
-function getTip(lighting, perspective, composition) {
-  const pool =
-    tips[composition.key] ||
-    tips[perspective.key]  ||
-    tips[lighting.key]     ||
-    tips.default;
-  return pool[Math.floor(Math.random() * pool.length)];
-}
-
-// ── FILTER PRESETS ────────────────────────────────────────────────────────────
-const filterPresets = {
-  zufall:  { subjects, lightings, perspectives, compositions, moods },
-  minimal: {
-    subjects: ["ein Detail","eine leere Fläche","eine Linie","eine Struktur","eine Textur","ein Muster"],
-    lightings: lightings.filter(l => ["soft","diffuse","cold","morning"].includes(l.key)),
-    perspectives: perspectives.filter(p => ["eye","close","sym","far"].includes(p.key)),
-    compositions: compositions.filter(c => ["negative","minimal","isolation","central"].includes(c.key)),
-    moods: ["Ruhe","Stille","Ordnung","Distanz","Einsamkeit"],
-  },
-  story: {
-    subjects: ["eine Bewegung","eine Silhouette","einen Übergang","etwas Alltägliches","einen Kontrast","eine Lichtquelle"],
-    lightings: lightings.filter(l => ["morning","evening","warm","backlight","soft"].includes(l.key)),
-    perspectives: perspectives.filter(p => ["eye","hip","frog","through"].includes(p.key)),
-    compositions: compositions.filter(c => ["layers","frame","asymmetry","central","negative"].includes(c.key)),
-    moods: ["Warten","Nostalgie","Einsamkeit","Melancholie","Spannung","Bewegung","Wärme"],
-  },
-  urban: {
-    subjects: ["eine Spiegelung","eine Linie","eine Struktur","einen Kontrast","eine Lichtquelle","einen Schatten","eine Form"],
-    lightings: lightings.filter(l => ["neon","artificial","hard","cold","backlight"].includes(l.key)),
-    perspectives: perspectives.filter(p => ["bird","frog","diag","through","sym"].includes(p.key)),
-    compositions: compositions.filter(c => ["symmetry","diagonal","repeat","central","layers"].includes(c.key)),
-    moods: ["Urbanität","Spannung","Kälte","Chaos","Ordnung"],
-  },
+// ── MOOD TINTS ────────────────────────────────────────────────────────────────
+// Very subtle background color shift based on lighting mood.
+// Keep all values extremely restrained.
+const moodBg = {
+  cold:    "#EBF0F2",  // soft blue-gray
+  warm:    "#F2EDE5",  // warm beige
+  cool:    "#EBEcF0",  // slightly cool
+  neutral: "#F0EDE8",  // default off-white
 };
 
 // ── UTILS ─────────────────────────────────────────────────────────────────────
-function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function pick(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
 
-function generate(filterKey) {
-  const f = filterPresets[filterKey];
-  const lighting    = pick(f.lightings);
-  const perspective = pick(f.perspectives);
-  const composition = pick(f.compositions);
+// ~40% chance to show quote
+function shouldShowQuote() {
+  return Math.random() < 0.4;
+}
+
+// Build the complete prompt sentence.
+// The sentence is intentionally structured as flowing lines,
+// not labeled categories.
+function buildPrompt(subject, lighting, perspective, composition) {
+  // We compose lines that flow naturally together.
+  // Not all four elements always appear — sometimes drop perspective for brevity.
+  const includePerspective = Math.random() > 0.35;
+
+  if (includePerspective) {
+    return `Fotografiere heute\n${subject}\n${lighting.phrase}\n${composition}.`;
+  } else {
+    return `Fotografiere heute\n${subject}\n${lighting.phrase}\n${perspective}.`;
+  }
+}
+
+// ── GENERATE ──────────────────────────────────────────────────────────────────
+function generate() {
+  const subject     = pick(subjects);
+  const lighting    = pick(lightings);
+  const perspective = pick(perspectives);
+  const composition = pick(compositions);
+  const reflection  = pick(reflections);
+  const showQuote   = shouldShowQuote();
+  const quote       = showQuote ? pick(quotes) : null;
+
   return {
-    subject: pick(f.subjects),
-    lighting, perspective, composition,
-    mood: pick(f.moods),
-    tip: getTip(lighting, perspective, composition),
+    sentence: buildPrompt(subject, lighting, perspective, composition),
+    reflection,
+    quote,
+    mood: lighting.mood,
   };
 }
 
 // ── DOM REFS ──────────────────────────────────────────────────────────────────
-const $ch       = document.getElementById('challenge');
-const $headline = document.getElementById('headline');
-const $moodLbl  = document.getElementById('mood-label');
-const $tip      = document.getElementById('tip-text');
-
-const $dLight = document.getElementById('d-light');
-const $dPersp = document.getElementById('d-persp');
-const $dComp  = document.getElementById('d-comp');
-const $dMood  = document.getElementById('d-mood');
-
-const $mLight = document.getElementById('m-light');
-const $mPersp = document.getElementById('m-persp');
-const $mComp  = document.getElementById('m-comp');
-const $mMood  = document.getElementById('m-mood');
-const $mTip   = document.getElementById('m-tip');
+const $shell      = document.getElementById('shell');
+const $wrap       = document.getElementById('prompt-wrap');
+const $prompt     = document.getElementById('prompt');
+const $reflection = document.getElementById('reflection');
+const $quoteBlock = document.getElementById('quote-block');
+const $quoteText  = document.getElementById('quote-text');
+const $quoteAuth  = document.getElementById('quote-author');
+const $nextBtn    = document.getElementById('next-btn');
 
 // ── RENDER ────────────────────────────────────────────────────────────────────
-function render(c) {
-  // Headline: "[subject] / im [lighting (italic)] / [perspective] / [composition]."
-  $headline.innerHTML =
-    `${c.subject}<br><em>im ${c.lighting.label}</em><br>${c.perspective.label}<br>${c.composition.label}.`;
+function render(data) {
+  // Prompt: newlines become <br>
+  $prompt.innerHTML = data.sentence
+    .split('\n')
+    .map((line, i) => i === 0 ? line : `<br>${line}`)
+    .join('');
 
-  $moodLbl.textContent = c.mood.toUpperCase();
-  $tip.textContent = c.tip;
+  // Reflection: newlines become <br>
+  $reflection.innerHTML = data.reflection
+    .split('\n')
+    .map((line, i) => i === 0 ? line : `<br>${line}`)
+    .join('');
 
-  // Desktop meta
-  $dLight.textContent = c.lighting.short;
-  $dPersp.textContent = c.perspective.short;
-  $dComp.textContent  = c.composition.short;
-  $dMood.textContent  = c.mood;
+  // Quote
+  if (data.quote) {
+    $quoteText.innerHTML = data.quote.text
+      .split('\n')
+      .map((line, i) => i === 0 ? line : `<br>${line}`)
+      .join('');
+    $quoteAuth.textContent = data.quote.author;
+    $quoteBlock.classList.remove('hidden');
+  } else {
+    $quoteBlock.classList.add('hidden');
+  }
 
-  // Mobile meta
-  $mLight.textContent = c.lighting.short;
-  $mPersp.textContent = c.perspective.short;
-  $mComp.textContent  = c.composition.short;
-  $mMood.textContent  = c.mood + "e Stimmung";
-  $mTip.textContent   = c.tip;
+  // Mood tint
+  $shell.style.background = moodBg[data.mood] || moodBg.neutral;
+  document.body.style.background = moodBg[data.mood] || moodBg.neutral;
 }
 
-// ── ROLL ─────────────────────────────────────────────────────────────────────
-let currentFilter = 'zufall';
+// ── TRANSITION ────────────────────────────────────────────────────────────────
+let busy = false;
 
-function roll(f) {
-  if (f) currentFilter = f;
-  $ch.classList.add('out');
+function next() {
+  if (busy) return;
+  busy = true;
+
+  $wrap.classList.add('out');
+
   setTimeout(() => {
-    render(generate(currentFilter));
-    $ch.classList.remove('out');
-  }, 330);
+    render(generate());
+    $wrap.classList.remove('out');
+    busy = false;
+  }, 480);
 }
 
-// ── FILTER BUTTONS ────────────────────────────────────────────────────────────
-document.querySelectorAll('.filter-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.filter-btn').forEach(b =>
-      b.classList.toggle('active', b.dataset.f === btn.dataset.f)
-    );
-    roll(btn.dataset.f);
-  });
+// ── INTERACTIONS ──────────────────────────────────────────────────────────────
+
+// Button click
+$nextBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  next();
 });
 
-// ── GENERATE BTN ─────────────────────────────────────────────────────────────
-document.getElementById('gen-btn').addEventListener('click', () => roll());
-
-// ── DARK MODE ─────────────────────────────────────────────────────────────────
-let dark = false;
-document.getElementById('dark-toggle').addEventListener('click', () => {
-  dark = !dark;
-  document.body.classList.toggle('dark', dark);
-});
-
-// ── SPACEBAR ─────────────────────────────────────────────────────────────────
-document.addEventListener('keydown', e => {
+// Spacebar
+document.addEventListener('keydown', (e) => {
   if (e.code === 'Space' && e.target === document.body) {
-    e.preventDefault(); roll();
+    e.preventDefault();
+    next();
+  }
+  // Also allow right arrow
+  if (e.code === 'ArrowRight') {
+    next();
   }
 });
 
-// ── INIT ─────────────────────────────────────────────────────────────────────
-render(generate('zufall'));
+// Tap anywhere on the content area (not the button, which already handles it)
+document.getElementById('content').addEventListener('click', next);
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+render(generate());
 </script>
 </body>
 </html>

@@ -3,10 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ONE FRAME</title>
+  <title>DAILY</title>
+
+  <!-- PWA / Homescreen Icon -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="apple-mobile-web-app-title" content="DAILY" />
+  <meta name="theme-color" content="#0D0D0D" />
+
+  <!-- Inline app icon as SVG favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230D0D0D'/><text y='67' x='50' text-anchor='middle' font-family='Georgia,serif' font-size='28' letter-spacing='6' fill='%23EDE0CC'>DAILY</text></svg>" />
+
+  <!-- Apple Touch Icon: embedded as data URI (1024×1024 equivalent via SVG) -->
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1024 1024'><rect width='1024' height='1024' rx='220' fill='%230D0D0D'/><text y='620' x='512' text-anchor='middle' font-family='Georgia,serif' font-size='280' letter-spacing='60' fill='%23EDE0CC'>DAILY</text></svg>" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400&display=swap" rel="stylesheet" />
+
   <style>
 
     /* ─────────────────────────────────────────────────────────────
@@ -15,12 +29,12 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:        #F0EDE8;
-      --ink:       #1C1917;
-      --ink-muted: #6B6560;
-      --ink-faint: #A8A39D;
-      --accent:    #8B5E3C;
-      --sep:       #D5D0C8;
+      --bg:         #F0EDE8;
+      --ink:        #1C1917;
+      --ink-muted:  #6B6560;
+      --ink-faint:  #AAA49D;
+      --accent:     #8B5E3C;
+      --sep:        #D0CBC3;
     }
 
     html, body {
@@ -29,31 +43,37 @@
       color: var(--ink);
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+      transition: background 0.8s ease;
     }
 
     body {
       font-family: 'Inter', -apple-system, sans-serif;
       font-weight: 300;
-      cursor: default;
-      transition: background 0.6s ease;
-      /* tap anywhere to generate */
-      user-select: none;
     }
 
     /* ─────────────────────────────────────────────────────────────
-       LAYOUT SHELL
+       SHELL
     ───────────────────────────────────────────────────────────── */
     #shell {
       min-height: 100vh;
+      min-height: 100dvh;
       display: flex;
       flex-direction: column;
-      padding: 36px 52px 40px;
-      max-width: 860px;
+      padding: 36px 52px 36px;
+      max-width: 820px;
     }
 
     /* ─────────────────────────────────────────────────────────────
-       LOGO
+       HEADER — logo + timer on same line
     ───────────────────────────────────────────────────────────── */
+    #header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-shrink: 0;
+      margin-bottom: 0;
+    }
+
     #logo {
       font-family: 'Inter', sans-serif;
       font-size: 10px;
@@ -61,38 +81,49 @@
       letter-spacing: 0.24em;
       color: var(--ink-muted);
       text-transform: uppercase;
-      margin-bottom: 0;
-      flex-shrink: 0;
+    }
+
+    /* Timer — always visible, very quiet */
+    #timer {
+      font-family: 'Inter', sans-serif;
+      font-size: 10px;
+      font-weight: 300;
+      letter-spacing: 0.08em;
+      color: var(--ink-faint);
+      font-variant-numeric: tabular-nums;
+      /* so numbers don't jump in width */
+      min-width: 72px;
+      text-align: right;
     }
 
     /* ─────────────────────────────────────────────────────────────
-       MAIN CONTENT — vertically centered in remaining space
+       MAIN CONTENT
     ───────────────────────────────────────────────────────────── */
     #content {
       flex: 1;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      padding: 60px 0 20px;
+      padding: 52px 0 16px;
     }
 
-    /* ─────────────────────────────────────────────────────────────
-       PROMPT — the core sentence
-       Fade + slight rise on transition
-    ───────────────────────────────────────────────────────────── */
+    /* Fade transition */
     #prompt-wrap {
       opacity: 1;
       transform: translateY(0);
-      transition: opacity 0.5s ease, transform 0.5s ease;
+      transition: opacity 0.55s ease, transform 0.55s ease;
     }
     #prompt-wrap.out {
       opacity: 0;
-      transform: translateY(16px);
+      transform: translateY(14px);
     }
 
+    /* ─────────────────────────────────────────────────────────────
+       PROMPT — the main sentence
+    ───────────────────────────────────────────────────────────── */
     #prompt {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: clamp(38px, 6vw, 72px);
+      font-size: clamp(36px, 5.8vw, 70px);
       font-weight: 500;
       line-height: 1.1;
       letter-spacing: -0.01em;
@@ -101,52 +132,48 @@
     }
 
     /* ─────────────────────────────────────────────────────────────
-       SEPARATOR — short em-dash style line (from moodboard)
+       RULE — short em-dash line
     ───────────────────────────────────────────────────────────── */
     .rule {
-      width: 32px;
+      width: 30px;
       height: 1.5px;
       background: var(--ink-muted);
-      margin-bottom: 28px;
-      opacity: 0.5;
+      opacity: 0.4;
+      margin-bottom: 26px;
     }
 
     /* ─────────────────────────────────────────────────────────────
-       REFLECTION NOTE — the quiet tip
+       REFLECTION — quiet tip
     ───────────────────────────────────────────────────────────── */
     #reflection {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: clamp(16px, 2vw, 20px);
+      font-size: clamp(15px, 1.9vw, 20px);
       font-weight: 400;
-      font-style: normal;
       line-height: 1.55;
       color: var(--ink-muted);
-      max-width: 420px;
+      max-width: 400px;
       margin-bottom: 52px;
     }
 
     /* ─────────────────────────────────────────────────────────────
-       QUOTE BLOCK — occasional literary thought
-       Only shown ~40% of the time
+       QUOTE BLOCK — always present in DAILY
     ───────────────────────────────────────────────────────────── */
     #quote-block {
-      margin-bottom: 64px;
       max-width: 400px;
     }
-    #quote-block.hidden { display: none; }
 
     #quote-mark {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 28px;
+      font-size: 26px;
       color: var(--accent);
       line-height: 1;
-      margin-bottom: 12px;
-      opacity: 0.85;
+      margin-bottom: 10px;
+      opacity: 0.8;
     }
 
     #quote-text {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: clamp(15px, 1.8vw, 18px);
+      font-size: clamp(14px, 1.75vw, 18px);
       font-weight: 400;
       font-style: italic;
       line-height: 1.65;
@@ -165,63 +192,46 @@
     #quote-author::before { content: "— "; }
 
     /* ─────────────────────────────────────────────────────────────
-       INTERACTION HINT — subtle arrow circle (from moodboard)
+       FOOTER — date indicator, very quiet
     ───────────────────────────────────────────────────────────── */
     #footer {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 14px;
       flex-shrink: 0;
-      padding-top: 8px;
-    }
-
-    #next-btn {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      border: 1px solid var(--ink-muted);
-      background: transparent;
+      padding-top: 32px;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      opacity: 0.45;
-      transition: opacity 0.25s ease, transform 0.2s ease, border-color 0.2s ease;
-      -webkit-tap-highlight-color: transparent;
+      justify-content: space-between;
+      align-items: flex-end;
     }
-    #next-btn:hover { opacity: 0.85; transform: scale(1.06); }
-    #next-btn:active { transform: scale(0.93); opacity: 1; }
-    #next-btn svg { color: var(--ink); }
 
-    /* small dot below button — pagination feel */
+    #date-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 9px;
+      font-weight: 300;
+      letter-spacing: 0.14em;
+      color: var(--ink-faint);
+      opacity: 0.6;
+    }
+
+    /* Subtle dot — visual anchor like in the moodboard */
     #dot {
       width: 4px;
       height: 4px;
       border-radius: 50%;
       background: var(--ink);
-      opacity: 0.2;
+      opacity: 0.15;
     }
-
-    /* ─────────────────────────────────────────────────────────────
-       MOOD TINT — very subtle background shift per prompt mood
-       Applied via CSS custom property on #shell
-    ───────────────────────────────────────────────────────────── */
-    #shell { transition: background 0.8s ease; }
 
     /* ─────────────────────────────────────────────────────────────
        RESPONSIVE
     ───────────────────────────────────────────────────────────── */
     @media (max-width: 600px) {
-      #shell { padding: 28px 32px 32px; }
-      #content { padding: 48px 0 16px; }
-      #prompt { margin-bottom: 28px; }
+      #shell   { padding: 28px 30px 28px; }
+      #content { padding: 44px 0 12px; }
+      #prompt  { margin-bottom: 28px; }
       #reflection { margin-bottom: 40px; }
-      #quote-block { margin-bottom: 48px; }
     }
 
     @media (max-width: 380px) {
-      #shell { padding: 24px 24px 28px; }
+      #shell { padding: 24px 22px 22px; }
     }
 
   </style>
@@ -230,23 +240,26 @@
 
 <div id="shell">
 
-  <!-- Logo -->
-  <div id="logo">One Frame</div>
+  <!-- Header: logo left, timer right -->
+  <div id="header">
+    <span id="logo">Daily</span>
+    <span id="timer">—</span>
+  </div>
 
   <!-- Main content -->
   <div id="content">
     <div id="prompt-wrap">
 
-      <!-- The prompt sentence -->
+      <!-- The daily prompt -->
       <p id="prompt"></p>
 
-      <!-- Short horizontal rule -->
+      <!-- Short rule -->
       <div class="rule"></div>
 
-      <!-- Reflective tip -->
+      <!-- Quiet reflection -->
       <p id="reflection"></p>
 
-      <!-- Occasional literary quote -->
+      <!-- Quote — always shown in DAILY -->
       <div id="quote-block">
         <div id="quote-mark">"</div>
         <p id="quote-text"></p>
@@ -256,30 +269,29 @@
     </div>
   </div>
 
-  <!-- Subtle interaction footer -->
+  <!-- Footer -->
   <div id="footer">
-    <button id="next-btn" aria-label="Neue Aufgabe">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-           stroke="currentColor" stroke-width="1.4"
-           stroke-linecap="round" stroke-linejoin="round">
-        <line x1="5" y1="12" x2="19" y2="12"/>
-        <polyline points="13 6 19 12 13 18"/>
-      </svg>
-    </button>
+    <span id="date-label"></span>
     <div id="dot"></div>
   </div>
 
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════════
-  GENERATOR
-  All data lives here. Add entries to any array to extend the app.
+  GENERATOR & TIMER
+  New prompt every day at 06:00 Vienna time.
+  Seed is the current Vienna date string → same date = same prompt.
 ════════════════════════════════════════════════════════════════════ -->
 <script>
 'use strict';
 
-// ── SUBJECTS ─────────────────────────────────────────────────────────────────
-// What to photograph. Add new subjects freely.
+// ────────────────────────────────────────────────────────────────────────────
+// DATA ARRAYS
+// Add new entries freely. Seed picks deterministically so adding entries
+// shifts future days but never breaks existing ones.
+// ────────────────────────────────────────────────────────────────────────────
+
+// SUBJECTS — what to photograph
 const subjects = [
   "eine Spiegelung",
   "einen Schatten",
@@ -298,24 +310,22 @@ const subjects = [
   "eine Textur",
 ];
 
-// ── LIGHTINGS ────────────────────────────────────────────────────────────────
-// Each entry: the phrase as it appears in the sentence + a mood key.
-// mood key controls the subtle background tint.
+// LIGHTINGS — how it is lit
+// mood: controls subtle background tint (cold / warm / neutral / cool)
 const lightings = [
   { phrase: "im kalten Morgenlicht",   mood: "cold"    },
   { phrase: "im warmen Abendlicht",    mood: "warm"    },
   { phrase: "im Gegenlicht",           mood: "neutral" },
   { phrase: "im diffusen Licht",       mood: "neutral" },
   { phrase: "im Neonlicht",            mood: "cool"    },
-  { phrase: "im künstlichen Licht",    mood: "neutral" },
+  { phrase: "im künstlichen Licht",    mood: "cool"    },
   { phrase: "im harten Mittagslicht",  mood: "warm"    },
   { phrase: "im weichen Licht",        mood: "neutral" },
   { phrase: "im ersten Morgenlicht",   mood: "warm"    },
   { phrase: "im letzten Tageslicht",   mood: "warm"    },
 ];
 
-// ── PERSPECTIVES ──────────────────────────────────────────────────────────────
-// Add new perspectives below.
+// PERSPECTIVES — how to look
 const perspectives = [
   "aus der Froschperspektive",
   "aus der Vogelperspektive",
@@ -328,8 +338,7 @@ const perspectives = [
   "aus der Hüfte",
 ];
 
-// ── COMPOSITIONS ──────────────────────────────────────────────────────────────
-// Add new compositions below.
+// COMPOSITIONS — how to frame
 const compositions = [
   "mit viel negativem Raum",
   "mit Symmetrie",
@@ -343,9 +352,8 @@ const compositions = [
   "mit asymmetrischer Balance",
 ];
 
-// ── REFLECTIONS ───────────────────────────────────────────────────────────────
-// Quiet tips. Feel like handwritten notes, not instructions.
-// Add new tips freely — keep them short and calm.
+// REFLECTIONS — quiet tips, one per prompt
+// Keep them short, calm, almost handwritten in feel.
 const reflections = [
   "Beobachte zuerst das Licht,\nbevor du fotografierst.",
   "Lass große Flächen leer und\nkonzentriere dich auf ein einziges Element.",
@@ -359,13 +367,13 @@ const reflections = [
   "Suche nach dem einen Moment\nder Stille im Bild.",
   "Atme einmal durch,\ndann drücke ab.",
   "Lass dich von Licht leiten,\nnicht von Motiven.",
+  "Sieh zuerst. Denk dann.\nDrücke zuletzt ab.",
+  "Nicht jede Aufnahme muss\netwas sagen. Manchmal genügt sie.",
 ];
 
-// ── QUOTES ────────────────────────────────────────────────────────────────────
-// Real quotes from photographers, writers, filmmakers.
-// Shown approximately 40% of the time.
-// NEVER use generated or fake quotes.
-// Add new entries with { text, author }.
+// QUOTES — real quotes, always shown in DAILY.
+// Only real, attributed quotes. Never generated.
+// Preferred: photographers, writers, filmmakers.
 const quotes = [
   {
     text: "There are things nobody would see\nif I didn't photograph them.",
@@ -392,178 +400,244 @@ const quotes = [
     author: "Susan Meiselas",
   },
   {
-    text: "Photography is not about cameras,\ngadgets and gizmos. It's about light and thought.",
-    author: "Andreas Feininger",
-  },
-  {
     text: "I am always mentally photographing\neverything as practice.",
     author: "Minor White",
   },
   {
-    text: "There is nothing worse\nthan a sharp image of a fuzzy concept.",
+    text: "There is nothing worse than\na sharp image of a fuzzy concept.",
     author: "Ansel Adams",
-  },
-  {
-    text: "The negative is the equivalent\nof the composer's score.",
-    author: "Ansel Adams",
-  },
-  {
-    text: "In photography there are no shadows\nthat cannot be illuminated.",
-    author: "August Sander",
-  },
-  {
-    text: "Light makes photography.\nEmbrace light. Admire it. Love it.",
-    author: "George Eastman",
   },
   {
     text: "You don't take a photograph,\nyou make it.",
     author: "Ansel Adams",
   },
   {
-    text: "The best thing about a picture\nis that it never changes,\neven when the people in it do.",
-    author: "Andy Warhol",
-  },
-  {
     text: "To me, photography is an art\nof observation.",
     author: "Elliott Erwitt",
   },
+  {
+    text: "The best images are the ones\nthat retain their strength over time.",
+    author: "Anne Geddes",
+  },
+  {
+    text: "Light makes photography.\nEmbrace it. Admire it. Love it.",
+    author: "George Eastman",
+  },
+  {
+    text: "In photography, the smallest thing\ncan be a great subject.",
+    author: "Henri Cartier-Bresson",
+  },
+  {
+    text: "Your first 10,000 photographs\nare your worst.",
+    author: "Henri Cartier-Bresson",
+  },
+  {
+    text: "To photograph is to hold one's breath,\nwhen all faculties converge.",
+    author: "Henri Cartier-Bresson",
+  },
+  {
+    text: "Photography is the simplest thing\nin the world, but it is incredibly complicated.",
+    author: "Martin Parr",
+  },
+  {
+    text: "Taking pictures is savoring life\nintensely, every hundredth of a second.",
+    author: "Marc Riboud",
+  },
+  {
+    text: "Landscape photography is the supreme test\nof the photographer.",
+    author: "Ansel Adams",
+  },
 ];
 
-// ── MOOD TINTS ────────────────────────────────────────────────────────────────
-// Very subtle background color shift based on lighting mood.
-// Keep all values extremely restrained.
+// ── MOOD BACKGROUND TINTS ─────────────────────────────────────────────────────
+// Extremely subtle — barely perceptible background shift.
 const moodBg = {
-  cold:    "#EBF0F2",  // soft blue-gray
-  warm:    "#F2EDE5",  // warm beige
-  cool:    "#EBEcF0",  // slightly cool
-  neutral: "#F0EDE8",  // default off-white
+  cold:    "#ECF0F2",
+  warm:    "#F2EDE4",
+  cool:    "#EBEDF0",
+  neutral: "#F0EDE8",
 };
 
-// ── UTILS ─────────────────────────────────────────────────────────────────────
-function pick(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
+// ────────────────────────────────────────────────────────────────────────────
+// SEED SYSTEM
+// The seed is the Vienna date string (YYYY-MM-DD).
+// Before 06:00 Vienna time → use yesterday's date.
+// This makes each day's prompt identical for all users.
+// ────────────────────────────────────────────────────────────────────────────
 
-// ~40% chance to show quote
-function shouldShowQuote() {
-  return Math.random() < 0.4;
-}
-
-// Build the complete prompt sentence.
-// The sentence is intentionally structured as flowing lines,
-// not labeled categories.
-function buildPrompt(subject, lighting, perspective, composition) {
-  // We compose lines that flow naturally together.
-  // Not all four elements always appear — sometimes drop perspective for brevity.
-  const includePerspective = Math.random() > 0.35;
-
-  if (includePerspective) {
-    return `Fotografiere heute\n${subject}\n${lighting.phrase}\n${composition}.`;
-  } else {
-    return `Fotografiere heute\n${subject}\n${lighting.phrase}\n${perspective}.`;
+function getViennaDateString() {
+  const now = new Date();
+  const viennaStr = now.toLocaleString('en-CA', {
+    timeZone: 'Europe/Vienna',
+    hour12: false,
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit'
+  });
+  const [datePart, timePart] = viennaStr.split(', ');
+  const [year, month, day] = datePart.split('-').map(Number);
+  const [hour] = timePart.split(':').map(Number);
+  // Before 06:00 → still showing yesterday's prompt
+  if (hour < 6) {
+    const d = new Date(Date.UTC(year, month - 1, day - 1));
+    return d.toISOString().slice(0, 10);
   }
+  return `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
 }
 
-// ── GENERATE ──────────────────────────────────────────────────────────────────
-function generate() {
-  const subject     = pick(subjects);
-  const lighting    = pick(lightings);
-  const perspective = pick(perspectives);
-  const composition = pick(compositions);
-  const reflection  = pick(reflections);
-  const showQuote   = shouldShowQuote();
-  const quote       = showQuote ? pick(quotes) : null;
-
-  return {
-    sentence: buildPrompt(subject, lighting, perspective, composition),
-    reflection,
-    quote,
-    mood: lighting.mood,
+// Seeded RNG: djb2 hash → LCG sequence
+// Same seed always produces same sequence.
+function makeRng(seed) {
+  let hash = 5381;
+  for (let i = 0; i < seed.length; i++) {
+    hash = ((hash << 5) + hash) + seed.charCodeAt(i);
+    hash |= 0;
+  }
+  return function() {
+    hash = Math.imul(1664525, hash) + 1013904223 | 0;
+    return (hash >>> 0) / 0xFFFFFFFF;
   };
 }
 
-// ── DOM REFS ──────────────────────────────────────────────────────────────────
-const $shell      = document.getElementById('shell');
-const $wrap       = document.getElementById('prompt-wrap');
+function seededPick(arr, rng) {
+  return arr[Math.floor(rng() * arr.length)];
+}
+
+// ── GENERATE TODAY'S PROMPT ───────────────────────────────────────────────────
+function generateToday() {
+  const seed = getViennaDateString();
+  const rng  = makeRng(seed);
+
+  const subject     = seededPick(subjects, rng);
+  const lighting    = seededPick(lightings, rng);
+  const perspective = seededPick(perspectives, rng);
+  const composition = seededPick(compositions, rng);
+  const reflection  = seededPick(reflections, rng);
+  const quote       = seededPick(quotes, rng);
+
+  // Build sentence: alternate between using perspective or composition
+  // as the fourth line, based on seed to keep it varied day to day.
+  const useComposition = rng() > 0.45;
+  const fourthLine = useComposition ? composition : perspective;
+
+  return {
+    sentence: `Fotografiere heute\n${subject}\n${lighting.phrase}\n${fourthLine}.`,
+    reflection,
+    quote,
+    mood: lighting.mood,
+    seed,
+  };
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// TIMER — seconds until next 06:00 Vienna
+// ────────────────────────────────────────────────────────────────────────────
+
+function getSecondsUntilNext6() {
+  const now = new Date();
+  const viennaStr = now.toLocaleString('en-CA', {
+    timeZone: 'Europe/Vienna',
+    hour12: false,
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit'
+  });
+  const [datePart, timePart] = viennaStr.split(', ');
+  const [year, month, day]   = datePart.split('-').map(Number);
+  const [hour, minute, sec]  = timePart.split(':').map(Number);
+
+  const decimal = hour + minute / 60 + sec / 3600;
+
+  // Target: next 06:00 — today if before 06:00, otherwise tomorrow
+  let tYear = year, tMonth = month, tDay = day;
+  if (decimal >= 6) {
+    const t = new Date(Date.UTC(year, month - 1, day + 1));
+    tYear  = t.getUTCFullYear();
+    tMonth = t.getUTCMonth() + 1;
+    tDay   = t.getUTCDate();
+  }
+
+  // Find Vienna UTC offset at target date (around 05:00 UTC to avoid edge cases)
+  const sample       = new Date(Date.UTC(tYear, tMonth - 1, tDay, 5, 0, 0));
+  const sampleVienna = new Date(sample.toLocaleString('en-US', { timeZone: 'Europe/Vienna' }));
+  const offsetHours  = -(sample - sampleVienna) / 3_600_000; // e.g. 2 in CEST
+  const utcHour      = 6 - offsetHours;                      // e.g. 4 in CEST
+
+  const next6 = new Date(Date.UTC(tYear, tMonth - 1, tDay, utcHour, 0, 0));
+  return Math.max(0, Math.floor((next6 - now) / 1000));
+}
+
+function formatTimer(totalSeconds) {
+  const h = Math.floor(totalSeconds / 3600);
+  const m = Math.floor((totalSeconds % 3600) / 60);
+  const s = totalSeconds % 60;
+  return `${h}h ${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}s`;
+}
+
+function formatDateLabel(seedStr) {
+  // seedStr: "2026-05-25" → "25. Mai 2026"
+  const [y, mo, d] = seedStr.split('-').map(Number);
+  const months = ["Januar","Februar","März","April","Mai","Juni",
+                  "Juli","August","September","Oktober","November","Dezember"];
+  return `${d}. ${months[mo - 1]} ${y}`;
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// DOM
+// ────────────────────────────────────────────────────────────────────────────
+
 const $prompt     = document.getElementById('prompt');
 const $reflection = document.getElementById('reflection');
-const $quoteBlock = document.getElementById('quote-block');
 const $quoteText  = document.getElementById('quote-text');
 const $quoteAuth  = document.getElementById('quote-author');
-const $nextBtn    = document.getElementById('next-btn');
+const $timer      = document.getElementById('timer');
+const $dateLabel  = document.getElementById('date-label');
+const $wrap       = document.getElementById('prompt-wrap');
 
-// ── RENDER ────────────────────────────────────────────────────────────────────
+function nl2br(str) {
+  return str.split('\n').join('<br>');
+}
+
 function render(data) {
-  // Prompt: newlines become <br>
-  $prompt.innerHTML = data.sentence
-    .split('\n')
-    .map((line, i) => i === 0 ? line : `<br>${line}`)
-    .join('');
-
-  // Reflection: newlines become <br>
-  $reflection.innerHTML = data.reflection
-    .split('\n')
-    .map((line, i) => i === 0 ? line : `<br>${line}`)
-    .join('');
-
-  // Quote
-  if (data.quote) {
-    $quoteText.innerHTML = data.quote.text
-      .split('\n')
-      .map((line, i) => i === 0 ? line : `<br>${line}`)
-      .join('');
-    $quoteAuth.textContent = data.quote.author;
-    $quoteBlock.classList.remove('hidden');
-  } else {
-    $quoteBlock.classList.add('hidden');
-  }
+  $prompt.innerHTML     = nl2br(data.sentence);
+  $reflection.innerHTML = nl2br(data.reflection);
+  $quoteText.innerHTML  = nl2br(data.quote.text);
+  $quoteAuth.textContent = data.quote.author;
+  $dateLabel.textContent = formatDateLabel(data.seed);
 
   // Mood tint
-  $shell.style.background = moodBg[data.mood] || moodBg.neutral;
-  document.body.style.background = moodBg[data.mood] || moodBg.neutral;
+  const bg = moodBg[data.mood] || moodBg.neutral;
+  document.body.style.background = bg;
+  document.documentElement.style.background = bg;
 }
 
-// ── TRANSITION ────────────────────────────────────────────────────────────────
-let busy = false;
+// ── TIMER LOOP ────────────────────────────────────────────────────────────────
+let lastSeed = null;
 
-function next() {
-  if (busy) return;
-  busy = true;
+function tick() {
+  const secs = getSecondsUntilNext6();
+  $timer.textContent = formatTimer(secs);
 
-  $wrap.classList.add('out');
+  // If the seed changed (new day crossed 06:00) → refresh prompt
+  const newSeed = getViennaDateString();
+  if (newSeed !== lastSeed) {
+    lastSeed = newSeed;
+    const data = generateToday();
 
-  setTimeout(() => {
-    render(generate());
-    $wrap.classList.remove('out');
-    busy = false;
-  }, 480);
+    if (lastSeed !== null) {
+      // Animate transition for day rollover
+      $wrap.classList.add('out');
+      setTimeout(() => {
+        render(data);
+        $wrap.classList.remove('out');
+      }, 550);
+    } else {
+      render(data);
+    }
+  }
 }
-
-// ── INTERACTIONS ──────────────────────────────────────────────────────────────
-
-// Button click
-$nextBtn.addEventListener('click', (e) => {
-  e.stopPropagation();
-  next();
-});
-
-// Spacebar
-document.addEventListener('keydown', (e) => {
-  if (e.code === 'Space' && e.target === document.body) {
-    e.preventDefault();
-    next();
-  }
-  // Also allow right arrow
-  if (e.code === 'ArrowRight') {
-    next();
-  }
-});
-
-// Tap anywhere on the content area (not the button, which already handles it)
-document.getElementById('content').addEventListener('click', next);
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
-render(generate());
+tick();
+setInterval(tick, 1000);
 </script>
 </body>
 </html>

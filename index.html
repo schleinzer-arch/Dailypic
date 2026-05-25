@@ -6,766 +6,742 @@
   <title>ONE FRAME</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; }
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #FAF9F7;
-      color: #0F0F0F;
-      transition: background 0.35s ease, color 0.35s ease;
-      min-height: 100vh;
-    }
-    body.dark { background: #0F0F0F; color: #F0EDE8; }
-    button { -webkit-tap-highlight-color: transparent; cursor: pointer; }
 
-    /* ── Layout ── */
-    #app {
+    /* ── RESET ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: #F2F0EB;
+      color: #1A1814;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      transition: background 0.4s ease, color 0.4s ease;
+      -webkit-font-smoothing: antialiased;
     }
+    body.dark { background: #141210; color: #EDE9E0; }
+    button { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    svg { display: block; flex-shrink: 0; }
 
-    /* ── Header ── */
+    /* ── HEADER ── */
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 24px 40px;
-      border-bottom: 1px solid #EDEAE5;
-      transition: border-color 0.35s ease;
+      padding: 28px 48px;
     }
-    body.dark header { border-color: #222; }
-
     #logo {
-      font-family: 'Inter', sans-serif;
-      font-size: 11px;
-      letter-spacing: 0.2em;
-      font-weight: 600;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      color: #1A1814;
+      transition: color 0.4s;
     }
+    body.dark #logo { color: #EDE9E0; }
+    #header-right { display: flex; align-items: center; gap: 24px; }
 
-    /* ── Filter Bar ── */
-    #filter-bar {
-      display: flex;
-      gap: 28px;
-      align-items: center;
-    }
+    /* ── FILTER PILLS ── */
+    .filter-group { display: flex; gap: 4px; align-items: center; }
     .filter-btn {
       background: none;
       border: none;
       font-family: 'Inter', sans-serif;
       font-size: 12px;
-      letter-spacing: 0.06em;
       font-weight: 400;
+      letter-spacing: 0.03em;
       color: #999;
-      padding: 0;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: color 0.2s ease, font-weight 0.1s ease;
+      padding: 6px 14px;
+      border-radius: 20px;
+      position: relative;
+      transition: background 0.2s, color 0.2s;
     }
-    .filter-btn.active { font-weight: 600; color: #0F0F0F; }
-    body.dark .filter-btn { color: #888; }
-    body.dark .filter-btn.active { color: #FAF9F7; }
-    .filter-dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      background: #ccc;
-      display: inline-block;
-      transition: background 0.3s ease;
+    .filter-btn.active { background: #1A1814; color: #F2F0EB; }
+    body.dark .filter-btn { color: #555; }
+    body.dark .filter-btn.active { background: #EDE9E0; color: #141210; }
+    .filter-btn .dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: #C9A84C;
+      position: absolute;
+      bottom: 3px; left: 50%;
+      transform: translateX(-50%);
+      display: none;
     }
-    .filter-btn.active .filter-dot { background: #F2C94C; }
+    .filter-btn.active .dot { display: block; }
 
-    /* ── Dark toggle ── */
+    /* ── DARK TOGGLE ── */
     #dark-toggle {
-      background: none;
-      border: none;
-      font-size: 14px;
-      color: #999;
-      padding: 0;
+      background: none; border: none;
+      color: #AAA;
+      display: flex; align-items: center; justify-content: center;
+      padding: 4px;
       transition: color 0.2s;
     }
-    body.dark #dark-toggle { color: #666; }
+    #dark-toggle:hover { color: #1A1814; }
+    body.dark #dark-toggle:hover { color: #EDE9E0; }
 
-    /* ── Mobile filter strip ── */
-    #mobile-filter {
+    /* ── MOBILE FILTER ── */
+    #filter-mobile {
       display: none;
-      padding: 16px 24px;
-      border-bottom: 1px solid #EDEAE5;
-      justify-content: center;
-      transition: border-color 0.35s ease;
+      padding: 0 24px 20px;
+      gap: 4px;
     }
-    body.dark #mobile-filter { border-color: #222; }
 
-    /* ── Main ── */
+    /* ── MAIN ── */
     main {
       flex: 1;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      padding: 60px 40px 40px;
-      max-width: 860px;
-      margin: 0 auto;
+      padding: 16px 48px 48px;
+      max-width: 800px;
       width: 100%;
+      margin: 0 auto;
     }
 
-    /* ── Challenge ── */
+    /* ── CHALLENGE FADE ── */
     #challenge {
       opacity: 1;
       transform: translateY(0);
-      transition: opacity 0.4s ease, transform 0.4s ease;
+      transition: opacity 0.32s ease, transform 0.32s ease;
     }
-    #challenge.hidden {
-      opacity: 0;
-      transform: translateY(10px);
-    }
+    #challenge.out { opacity: 0; transform: translateY(14px); }
 
-    .label-tiny {
-      font-family: 'Inter', sans-serif;
-      font-size: 9px;
-      letter-spacing: 0.16em;
-      color: #B0A99A;
-      text-align: center;
-      margin-bottom: 20px;
-      text-transform: uppercase;
-      transition: color 0.35s ease;
-    }
-    body.dark .label-tiny { color: #555; }
-
-    #headline {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: clamp(34px, 4.5vw, 56px);
-      font-weight: 700;
-      line-height: 1.2;
-      letter-spacing: -0.01em;
-      color: #0F0F0F;
-      text-align: center;
-      max-width: 700px;
-      margin: 0 auto;
-      transition: color 0.35s ease;
-    }
-    body.dark #headline { color: #F0EDE8; }
-    #headline .accent { /* color set dynamically */ }
-
-    /* ── Motto ── */
-    #motto-wrap {
-      text-align: center;
-      margin-top: 28px;
-    }
-    #motto-quote {
-      font-size: 20px;
-      color: #F2C94C;
-      margin-bottom: 6px;
-    }
-    #motto-label {
-      font-family: 'Inter', sans-serif;
-      font-size: 9px;
-      letter-spacing: 0.14em;
-      color: #B0A99A;
-      margin-bottom: 8px;
-      text-transform: uppercase;
-      transition: color 0.35s ease;
-    }
-    body.dark #motto-label { color: #555; }
-    #motto-text {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: 26px;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-      color: #0F0F0F;
-      transition: color 0.35s ease;
-    }
-    body.dark #motto-text { color: #F0EDE8; }
-
-    /* ── Meta Row (desktop) ── */
-    #meta-row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      border-top: 1px solid #E8E5E0;
-      border-bottom: 1px solid #E8E5E0;
-      padding: 20px 0;
-      margin-top: 36px;
-      transition: border-color 0.35s ease;
-    }
-    body.dark #meta-row { border-color: #333; }
-    .meta-cell {
-      padding: 0 20px;
-      border-right: 1px solid #E8E5E0;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      transition: border-color 0.35s ease;
-    }
-    body.dark .meta-cell { border-color: #333; }
-    .meta-cell:last-child { border-right: none; }
-    .meta-icon-row {
+    /* ── EYEBROW ── */
+    .eyebrow {
       display: flex;
       align-items: center;
-      gap: 6px;
-      color: #B0A99A;
-      transition: color 0.35s ease;
+      gap: 12px;
+      margin-bottom: 22px;
     }
-    body.dark .meta-icon-row { color: #555; }
-    .meta-cell-label {
+    .eyebrow-line {
+      width: 28px; height: 1.5px;
+      background: #C9A84C;
+    }
+    .eyebrow-text {
       font-size: 9px;
-      letter-spacing: 0.12em;
-      color: #B0A99A;
-      text-transform: uppercase;
-      transition: color 0.35s ease;
-    }
-    body.dark .meta-cell-label { color: #555; }
-    .meta-cell-value {
-      font-size: 13px;
       font-weight: 500;
-      color: #1A1A1A;
-      transition: color 0.35s ease;
-    }
-    body.dark .meta-cell-value { color: #E5E0D8; }
-    .meta-cell-sub {
-      font-size: 11px;
+      letter-spacing: 0.22em;
       color: #999;
-      margin-top: 2px;
-      transition: color 0.35s ease;
+      text-transform: uppercase;
     }
-    body.dark .meta-cell-sub { color: #666; }
-    .color-dot {
-      width: 12px; height: 12px; border-radius: 50%;
-      display: inline-block; flex-shrink: 0;
-    }
+    body.dark .eyebrow-text { color: #555; }
 
-    /* ── Meta Row (mobile) ── */
-    #meta-mobile {
-      display: none;
-      margin-top: 32px;
-      border-top: 1px solid #E8E5E0;
-      transition: border-color 0.35s ease;
+    /* ── HEADLINE ── */
+    #headline {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(40px, 6.2vw, 72px);
+      font-weight: 600;
+      line-height: 1.12;
+      letter-spacing: -0.01em;
+      color: #1A1814;
+      margin-bottom: 40px;
+      transition: color 0.4s;
     }
-    body.dark #meta-mobile { border-color: #333; }
-    .meta-mobile-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      padding: 14px 0;
-      border-bottom: 1px solid #F0EDE8;
-      transition: border-color 0.35s ease;
-    }
-    body.dark .meta-mobile-row { border-color: #2A2A2A; }
-    .meta-mobile-left {
+    body.dark #headline { color: #EDE9E0; }
+    #headline em { font-style: italic; font-weight: 400; }
+
+    /* ── MOOD ── */
+    #mood-row {
       display: flex;
       align-items: center;
-      gap: 8px;
-      color: #B0A99A;
+      gap: 10px;
+      margin-bottom: 14px;
     }
-    body.dark .meta-mobile-left { color: #555; }
-    .meta-mobile-right { text-align: right; }
-
-    /* ── Tip ── */
-    #tip-box {
-      margin-top: 28px;
-      padding: 20px 0;
-      text-align: center;
+    .mood-icon {
+      color: #C9A84C;
+      font-family: Georgia, serif;
+      font-size: 26px;
+      line-height: 1;
+      margin-top: -6px;
     }
-    #tip-label {
-      font-size: 9px;
-      letter-spacing: 0.14em;
-      color: #B0A99A;
-      margin-bottom: 10px;
+    #mood-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      color: #1A1814;
       text-transform: uppercase;
-      transition: color 0.35s ease;
+      transition: color 0.4s;
     }
-    body.dark #tip-label { color: #555; }
+    body.dark #mood-label { color: #EDE9E0; }
+
+    /* ── TIP (desktop) ── */
     #tip-text {
-      font-size: 14px;
+      font-size: 15px;
+      font-weight: 300;
       line-height: 1.7;
-      color: #777;
-      max-width: 400px;
-      margin: 0 auto;
-      font-style: italic;
-      transition: color 0.35s ease;
+      color: #5A5650;
+      max-width: 360px;
+      margin-bottom: 48px;
+      transition: color 0.4s;
     }
     body.dark #tip-text { color: #888; }
 
-    /* ── Generate Button ── */
-    #gen-wrap { text-align: center; margin-top: 40px; }
+    /* ── SEPARATOR ── */
+    .sep {
+      width: 100%; height: 1px;
+      background: #DDD9D0;
+      margin-bottom: 32px;
+      transition: background 0.4s;
+    }
+    body.dark .sep { background: #292520; }
+
+    /* ── META ROW (desktop) ── */
+    #meta-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      margin-bottom: 52px;
+    }
+    .meta-cell { display: flex; flex-direction: column; gap: 7px; padding-right: 16px; }
+    .meta-cell-icon { color: #AAA; transition: color 0.4s; }
+    body.dark .meta-cell-icon { color: #555; }
+    .meta-cell-label {
+      font-size: 8px;
+      letter-spacing: 0.16em;
+      color: #BBB;
+      text-transform: uppercase;
+      font-weight: 500;
+      transition: color 0.4s;
+    }
+    body.dark .meta-cell-label { color: #444; }
+    .meta-cell-value {
+      font-size: 13px;
+      font-weight: 400;
+      color: #1A1814;
+      transition: color 0.4s;
+    }
+    body.dark .meta-cell-value { color: #C8C2B4; }
+
+    /* ── META CARDS (mobile 2×2) ── */
+    #meta-mobile {
+      display: none;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+    .meta-card {
+      background: #E8E5DE;
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: background 0.4s;
+    }
+    body.dark .meta-card { background: #1D1B18; }
+    .meta-card-icon { color: #AAA; }
+    body.dark .meta-card-icon { color: #444; }
+    .meta-card-value {
+      font-size: 13px;
+      color: #1A1814;
+      font-weight: 400;
+      transition: color 0.4s;
+    }
+    body.dark .meta-card-value { color: #B8B2A4; }
+
+    /* ── TIP (mobile) ── */
+    #tip-mobile { display: none; margin-bottom: 40px; }
+    .tip-label {
+      font-size: 8px;
+      letter-spacing: 0.18em;
+      color: #BBB;
+      text-transform: uppercase;
+      font-weight: 500;
+      margin-bottom: 10px;
+      transition: color 0.4s;
+    }
+    body.dark .tip-label { color: #444; }
+    .tip-body {
+      font-size: 14px;
+      font-weight: 300;
+      line-height: 1.7;
+      color: #5A5650;
+      transition: color 0.4s;
+    }
+    body.dark .tip-body { color: #777; }
+
+    /* ── GENERATE BUTTON ── */
+    #gen-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
     #gen-btn {
-      background: #0F0F0F;
-      border: 1px solid #0F0F0F;
-      border-radius: 50%;
       width: 72px; height: 72px;
-      display: inline-flex;
+      border-radius: 50%;
+      background: #1A1814;
+      border: none;
+      display: flex;
       align-items: center;
       justify-content: center;
-      color: #F2C94C;
-      transition: transform 0.15s ease, background 0.2s ease;
+      color: #C9A84C;
+      box-shadow: 0 0 0 7px rgba(201,168,76,0.13);
+      transition: transform 0.18s ease, box-shadow 0.2s ease, background 0.4s;
     }
-    body.dark #gen-btn { background: #1A1A1A; border-color: #444; box-shadow: 0 0 0 1px #333; }
-    #gen-btn:hover { background: #2A2A2A; }
-    body.dark #gen-btn:hover { background: #222; }
+    body.dark #gen-btn {
+      background: #EDE9E0;
+      box-shadow: 0 0 0 7px rgba(201,168,76,0.10);
+    }
+    #gen-btn:hover {
+      transform: scale(1.07);
+      box-shadow: 0 0 0 12px rgba(201,168,76,0.16);
+    }
     #gen-btn:active { transform: scale(0.93); }
     #gen-label {
-      margin-top: 12px;
       font-size: 9px;
-      letter-spacing: 0.18em;
-      color: #999;
-      transition: color 0.35s ease;
+      letter-spacing: 0.22em;
+      color: #BBB;
+      text-transform: uppercase;
+      transition: color 0.4s;
     }
-    body.dark #gen-label { color: #555; }
+    body.dark #gen-label { color: #444; }
 
-    /* ── Footer ── */
+    /* ── FOOTER ── */
     footer {
       display: flex;
       justify-content: space-between;
-      padding: 20px 40px;
-      border-top: 1px solid #EDEAE5;
-      transition: border-color 0.35s ease;
+      padding: 24px 48px;
     }
-    body.dark footer { border-color: #222; }
-    .footer-text {
+    .f-quote {
       font-size: 10px;
-      color: #C0B9B0;
-      transition: color 0.35s ease;
+      font-style: italic;
+      color: #BBB;
+      transition: color 0.4s;
     }
-    body.dark .footer-text { color: #444; }
-    .footer-italic { font-style: italic; }
+    body.dark .f-quote { color: #3A3632; }
+    .f-tag {
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      color: #BBB;
+      transition: color 0.4s;
+    }
+    body.dark .f-tag { color: #3A3632; }
 
-    /* ── Responsive ── */
-    @media (max-width: 699px) {
-      header { padding: 20px 24px; }
-      #desktop-filter { display: none !important; }
-      #mobile-filter { display: flex !important; }
-      main { padding: 40px 24px 24px; max-width: 100%; }
-      #headline { font-size: clamp(26px, 7vw, 36px); }
-      #meta-row { display: none !important; }
-      #meta-mobile { display: block !important; }
-      footer { padding: 16px 24px; }
+    /* ── RESPONSIVE ── */
+    @media (max-width: 680px) {
+      header { padding: 22px 24px 14px; }
+      #filter-desktop { display: none !important; }
+      #filter-mobile { display: flex !important; }
+      main { padding: 4px 24px 40px; max-width: 100%; }
+      #headline { font-size: clamp(34px, 9vw, 50px); margin-bottom: 24px; }
+      #tip-text { display: none; }
+      #mood-row { margin-bottom: 24px; }
+      .sep { margin-bottom: 20px; }
+      #meta-row { display: none; }
+      #meta-mobile { display: grid; }
+      #tip-mobile { display: block; }
+      footer { padding: 18px 24px; }
     }
+
   </style>
 </head>
 <body>
-<div id="app">
 
-  <!-- Header -->
-  <header>
-    <span id="logo">ONE FRAME</span>
-    <nav id="filter-bar" id="desktop-filter">
-      <button class="filter-btn" data-filter="minimal">Minimal</button>
-      <button class="filter-btn" data-filter="technisch">Technisch</button>
-      <button class="filter-btn" data-filter="story">Story</button>
-      <button class="filter-btn active" data-filter="zufall">
-        <span class="filter-dot"></span>Zufall
-      </button>
+<!-- ── HEADER ── -->
+<header>
+  <span id="logo">ONE FRAME</span>
+  <div id="header-right">
+    <nav class="filter-group" id="filter-desktop">
+      <button class="filter-btn active" data-f="zufall">Zufall<span class="dot"></span></button>
+      <button class="filter-btn" data-f="minimal">Minimal</button>
+      <button class="filter-btn" data-f="story">Story</button>
+      <button class="filter-btn" data-f="urban">Urban</button>
     </nav>
-    <button id="dark-toggle" aria-label="Dark Mode umschalten">◑</button>
-  </header>
-
-  <!-- Mobile filter -->
-  <div id="mobile-filter">
-    <nav id="filter-bar-mobile" style="display:flex;gap:24px;align-items:center;">
-      <button class="filter-btn" data-filter="minimal">Minimal</button>
-      <button class="filter-btn" data-filter="technisch">Technisch</button>
-      <button class="filter-btn" data-filter="story">Story</button>
-      <button class="filter-btn active" data-filter="zufall">
-        <span class="filter-dot"></span>Zufall
-      </button>
-    </nav>
+    <button id="dark-toggle" aria-label="Dark Mode">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="4"/>
+        <line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/>
+        <line x1="4.93" y1="4.93" x2="7.05" y2="7.05"/><line x1="16.95" y1="16.95" x2="19.07" y2="19.07"/>
+        <line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/>
+        <line x1="4.93" y1="19.07" x2="7.05" y2="16.95"/><line x1="16.95" y1="7.05" x2="19.07" y2="4.93"/>
+      </svg>
+    </button>
   </div>
+</header>
 
-  <!-- Main -->
-  <main>
-    <div id="challenge">
+<!-- Mobile filter -->
+<nav class="filter-group" id="filter-mobile">
+  <button class="filter-btn active" data-f="zufall">Zufall<span class="dot"></span></button>
+  <button class="filter-btn" data-f="minimal">Minimal</button>
+  <button class="filter-btn" data-f="story">Story</button>
+  <button class="filter-btn" data-f="urban">Urban</button>
+</nav>
 
-      <!-- Label -->
-      <div class="label-tiny">Deine Aufgabe</div>
+<!-- ── MAIN ── -->
+<main>
+  <div id="challenge">
 
-      <!-- Headline -->
-      <h1 id="headline"></h1>
-
-      <!-- Motto -->
-      <div id="motto-wrap">
-        <div id="motto-quote">"</div>
-        <div id="motto-label">Motto</div>
-        <div id="motto-text"></div>
-      </div>
-
-      <!-- Meta desktop -->
-      <div id="meta-row">
-        <div class="meta-cell">
-          <div class="meta-icon-row">
-            <span class="color-dot" id="meta-color-dot"></span>
-            <span class="meta-cell-label">Farbe</span>
-          </div>
-          <div>
-            <div class="meta-cell-value" id="meta-color-val"></div>
-          </div>
-        </div>
-        <div class="meta-cell">
-          <div class="meta-icon-row">
-            <!-- perspective icon -->
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20L12 4L22 20H2Z"/><line x1="7" y1="20" x2="17" y2="20"/></svg>
-            <span class="meta-cell-label">Perspektive</span>
-          </div>
-          <div class="meta-cell-value" id="meta-persp-val"></div>
-        </div>
-        <div class="meta-cell">
-          <div class="meta-icon-row">
-            <!-- aperture icon -->
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="14.31" y1="8" x2="20.05" y2="17.94"/><line x1="9.69" y1="8" x2="21.17" y2="8"/><line x1="7.38" y1="12" x2="13.12" y2="2.06"/><line x1="9.69" y1="16" x2="3.95" y2="6.06"/><line x1="14.31" y1="16" x2="2.83" y2="16"/><line x1="16.62" y1="12" x2="10.88" y2="21.94"/></svg>
-            <span class="meta-cell-label">Technik</span>
-          </div>
-          <div>
-            <div class="meta-cell-value" id="meta-tech-val"></div>
-            <div class="meta-cell-sub" id="meta-tech-sub"></div>
-          </div>
-        </div>
-        <div class="meta-cell">
-          <div class="meta-icon-row">
-            <!-- format icon -->
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
-            <span class="meta-cell-label">Format</span>
-          </div>
-          <div class="meta-cell-value" id="meta-fmt-val"></div>
-        </div>
-      </div>
-
-      <!-- Meta mobile -->
-      <div id="meta-mobile">
-        <div class="meta-mobile-row">
-          <div class="meta-mobile-left">
-            <span class="color-dot" id="meta-color-dot-m"></span>
-            <span class="meta-cell-label">Farbe</span>
-          </div>
-          <div class="meta-mobile-right">
-            <div class="meta-cell-value" id="meta-color-val-m"></div>
-          </div>
-        </div>
-        <div class="meta-mobile-row">
-          <div class="meta-mobile-left">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20L12 4L22 20H2Z"/><line x1="7" y1="20" x2="17" y2="20"/></svg>
-            <span class="meta-cell-label">Perspektive</span>
-          </div>
-          <div class="meta-mobile-right">
-            <div class="meta-cell-value" id="meta-persp-val-m"></div>
-          </div>
-        </div>
-        <div class="meta-mobile-row">
-          <div class="meta-mobile-left">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="14.31" y1="8" x2="20.05" y2="17.94"/><line x1="9.69" y1="8" x2="21.17" y2="8"/><line x1="7.38" y1="12" x2="13.12" y2="2.06"/><line x1="9.69" y1="16" x2="3.95" y2="6.06"/><line x1="14.31" y1="16" x2="2.83" y2="16"/><line x1="16.62" y1="12" x2="10.88" y2="21.94"/></svg>
-            <span class="meta-cell-label">Technik</span>
-          </div>
-          <div class="meta-mobile-right">
-            <div class="meta-cell-value" id="meta-tech-val-m"></div>
-            <div class="meta-cell-sub" id="meta-tech-sub-m"></div>
-          </div>
-        </div>
-        <div class="meta-mobile-row">
-          <div class="meta-mobile-left">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
-            <span class="meta-cell-label">Format</span>
-          </div>
-          <div class="meta-mobile-right">
-            <div class="meta-cell-value" id="meta-fmt-val-m"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tip -->
-      <div id="tip-box">
-        <div id="tip-label">Tipp</div>
-        <p id="tip-text"></p>
-      </div>
-
-    </div><!-- /#challenge -->
-
-    <!-- Generate button -->
-    <div id="gen-wrap">
-      <button id="gen-btn" aria-label="Neue Aufgabe generieren">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="2" width="20" height="20" rx="3"/>
-          <circle cx="8" cy="8" r="1.2" fill="currentColor" stroke="none"/>
-          <circle cx="16" cy="8" r="1.2" fill="currentColor" stroke="none"/>
-          <circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/>
-          <circle cx="8" cy="16" r="1.2" fill="currentColor" stroke="none"/>
-          <circle cx="16" cy="16" r="1.2" fill="currentColor" stroke="none"/>
-        </svg>
-      </button>
-      <div id="gen-label">Neue Aufgabe</div>
+    <div class="eyebrow">
+      <div class="eyebrow-line"></div>
+      <div class="eyebrow-text">Fotografiere heute</div>
     </div>
 
-  </main>
+    <h1 id="headline"></h1>
 
-  <!-- Footer -->
-  <footer>
-    <span class="footer-text footer-italic">Lass dich inspirieren. Gehe raus. Fotografiere.</span>
-    <span class="footer-text">#oneframe</span>
-  </footer>
+    <div id="mood-row">
+      <span class="mood-icon">"</span>
+      <span id="mood-label"></span>
+    </div>
 
-</div><!-- /#app -->
+    <!-- Tip desktop -->
+    <p id="tip-text"></p>
 
+    <div class="sep"></div>
+
+    <!-- Meta desktop 4-col -->
+    <div id="meta-row">
+      <div class="meta-cell">
+        <div class="meta-cell-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4"/>
+            <line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/>
+            <line x1="4.93" y1="4.93" x2="7.05" y2="7.05"/><line x1="16.95" y1="16.95" x2="19.07" y2="19.07"/>
+            <line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/>
+          </svg>
+        </div>
+        <span class="meta-cell-label">Licht</span>
+        <span class="meta-cell-value" id="d-light"></span>
+      </div>
+      <div class="meta-cell">
+        <div class="meta-cell-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/>
+          </svg>
+        </div>
+        <span class="meta-cell-label">Perspektive</span>
+        <span class="meta-cell-value" id="d-persp"></span>
+      </div>
+      <div class="meta-cell">
+        <div class="meta-cell-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 7 3 3 7 3"/><polyline points="17 3 21 3 21 7"/>
+            <polyline points="21 17 21 21 17 21"/><polyline points="7 21 3 21 3 17"/>
+          </svg>
+        </div>
+        <span class="meta-cell-label">Komposition</span>
+        <span class="meta-cell-value" id="d-comp"></span>
+      </div>
+      <div class="meta-cell">
+        <div class="meta-cell-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 12c2-4 4-6 6-6s4 4 6 4 4-4 6-4"/>
+            <path d="M2 17c2-4 4-6 6-6s4 4 6 4 4-4 6-4" opacity=".4"/>
+          </svg>
+        </div>
+        <span class="meta-cell-label">Stimmung</span>
+        <span class="meta-cell-value" id="d-mood"></span>
+      </div>
+    </div>
+
+    <!-- Meta mobile 2×2 -->
+    <div id="meta-mobile">
+      <div class="meta-card">
+        <div class="meta-card-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4"/>
+            <line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/>
+            <line x1="4.93" y1="4.93" x2="7.05" y2="7.05"/><line x1="16.95" y1="16.95" x2="19.07" y2="19.07"/>
+            <line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/>
+          </svg>
+        </div>
+        <span class="meta-card-value" id="m-light"></span>
+      </div>
+      <div class="meta-card">
+        <div class="meta-card-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/>
+          </svg>
+        </div>
+        <span class="meta-card-value" id="m-persp"></span>
+      </div>
+      <div class="meta-card">
+        <div class="meta-card-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 7 3 3 7 3"/><polyline points="17 3 21 3 21 7"/>
+            <polyline points="21 17 21 21 17 21"/><polyline points="7 21 3 21 3 17"/>
+          </svg>
+        </div>
+        <span class="meta-card-value" id="m-comp"></span>
+      </div>
+      <div class="meta-card">
+        <div class="meta-card-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 12c2-4 4-6 6-6s4 4 6 4 4-4 6-4"/>
+          </svg>
+        </div>
+        <span class="meta-card-value" id="m-mood"></span>
+      </div>
+    </div>
+
+    <!-- Tip mobile -->
+    <div id="tip-mobile">
+      <div class="tip-label">Tipp</div>
+      <div class="tip-body" id="m-tip"></div>
+    </div>
+
+  </div><!-- /#challenge -->
+
+  <!-- Generate button -->
+  <div id="gen-wrap">
+    <button id="gen-btn" aria-label="Neue Aufgabe generieren">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2l1.6 7.8L21 11l-7.4 1.2L12 20l-1.6-7.8L3 11l7.4-1.2Z"/>
+      </svg>
+    </button>
+    <span id="gen-label">Neue Aufgabe</span>
+  </div>
+
+</main>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <span class="f-quote">Gutes Sehen beginnt mit Achtsamkeit.</span>
+  <span class="f-tag">#oneframe</span>
+</footer>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+  GENERATOR — edit arrays below to add new prompts
+════════════════════════════════════════════════════════════════════════ -->
 <script>
-// ═══════════════════════════════════════════════════════════════════════════
-// ONE FRAME — Generator
-// Ergänze neue Einträge direkt in den Arrays unten.
-// ═══════════════════════════════════════════════════════════════════════════
+'use strict';
 
-// ── Motive ─────────────────────────────────────────────────────────────────
+// ── SUBJECTS — add new subjects here ─────────────────────────────────────────
 const subjects = [
-  "ein Detail", "eine Spiegelung", "einen Schatten", "eine Linie",
-  "eine Tür", "ein Fenster", "eine Treppe", "eine Bewegung",
-  "eine Silhouette", "ein Muster", "eine Lichtquelle",
-  "etwas Alltägliches", "einen Kontrast", "eine leere Fläche", "eine Spur",
-  "einen Rahmen im Rahmen", "eine Textur", "einen Moment des Wartens",
+  "eine Spiegelung","einen Schatten","eine Linie","eine Struktur",
+  "eine Bewegung","eine Lichtquelle","ein Detail","eine Silhouette",
+  "ein Muster","eine leere Fläche","einen Übergang","einen Kontrast",
+  "eine Form","etwas Alltägliches","eine Textur",
 ];
 
-// ── Farben ──────────────────────────────────────────────────────────────────
-const colors = [
-  { label: "Rot",                hex: "#D64545" },
-  { label: "Blau",               hex: "#3D7BFF" },
-  { label: "Gelb",               hex: "#F2C94C" },
-  { label: "Grün",               hex: "#27AE60" },
-  { label: "Schwarzweiß",        hex: "#1E1E1E" },
-  { label: "warme Farben",       hex: "#E07B39" },
-  { label: "kalte Farben",       hex: "#74A9CF" },
-  { label: "eine dominante Farbe", hex: "#8B5CF6" },
-  { label: "Neon",               hex: "#00CC66" },
-  { label: "Pastell",            hex: "#E8839B" },
+// ── LIGHTINGS — add new lighting types here ───────────────────────────────────
+const lightings = [
+  { label:"kaltem Licht",        short:"Kaltes Licht",       key:"cold"       },
+  { label:"warmem Licht",        short:"Warmes Licht",       key:"warm"       },
+  { label:"Gegenlicht",          short:"Gegenlicht",         key:"backlight"  },
+  { label:"diffusem Licht",      short:"Diffuses Licht",     key:"diffuse"    },
+  { label:"Neonlicht",           short:"Neonlicht",          key:"neon"       },
+  { label:"künstlichem Licht",   short:"Künstl. Licht",      key:"artificial" },
+  { label:"hartem Licht",        short:"Hartes Licht",       key:"hard"       },
+  { label:"weichem Licht",       short:"Weiches Licht",      key:"soft"       },
+  { label:"Morgenlicht",         short:"Morgenlicht",        key:"morning"    },
+  { label:"Abendlicht",          short:"Abendlicht",         key:"evening"    },
 ];
 
-// ── Perspektiven ────────────────────────────────────────────────────────────
+// ── PERSPECTIVES — add new perspectives here ──────────────────────────────────
 const perspectives = [
-  "aus der Froschperspektive", "aus der Vogelperspektive",
-  "auf Augenhöhe", "aus extremer Nähe", "durch etwas hindurch",
-  "mit viel negativem Raum", "streng symmetrisch",
-  "diagonal komponiert", "aus der Hüfte",
+  { label:"aus der Froschperspektive", short:"Froschperspektive", key:"frog"    },
+  { label:"aus der Vogelperspektive",  short:"Vogelperspektive",  key:"bird"    },
+  { label:"auf Augenhöhe",             short:"Auf Augenhöhe",     key:"eye"     },
+  { label:"aus extremer Nähe",         short:"Extreme Nähe",      key:"close"   },
+  { label:"durch etwas hindurch",      short:"Durch etwas hindurch", key:"through"},
+  { label:"mit viel Abstand",          short:"Viel Abstand",      key:"far"     },
+  { label:"diagonal",                  short:"Diagonal",          key:"diag"    },
+  { label:"symmetrisch",               short:"Symmetrisch",       key:"sym"     },
+  { label:"aus der Hüfte",             short:"Aus der Hüfte",     key:"hip"     },
 ];
 
-// ── Techniken ───────────────────────────────────────────────────────────────
-const techniques = [
-  { label: "Offene Blende",        sub: "z.B. f/2.8",      key: "blur"      },
-  { label: "Geschlossene Blende",  sub: "z.B. f/8",        key: "sharp"     },
-  { label: "Lange Belichtung",     sub: "z.B. 2–10 Sek.",  key: "longexp"   },
-  { label: "Kurze Belichtungszeit",sub: "z.B. 1/1000s",    key: "shortexp"  },
-  { label: "Hoher ISO-Wert",       sub: "z.B. ISO 3200",   key: "highiso"   },
-  { label: "Manueller Fokus",      sub: "",                 key: "mf"        },
-  { label: "Bewegungsunschärfe",   sub: "",                 key: "motion"    },
-  { label: "Hartes Licht",         sub: "",                 key: "hardlight" },
-  { label: "Weiches Licht",        sub: "",                 key: "softlight" },
+// ── COMPOSITIONS — add new compositions here ──────────────────────────────────
+const compositions = [
+  { label:"mit viel negativem Raum",        short:"Negativer Raum",   key:"negative"  },
+  { label:"mit Symmetrie",                  short:"Symmetrie",         key:"symmetry"  },
+  { label:"mit diagonalen Linien",          short:"Diagonale Linien",  key:"diagonal"  },
+  { label:"mit minimalistischem Aufbau",    short:"Minimalistisch",    key:"minimal"   },
+  { label:"mit Vordergrund und Hintergrund",short:"Tiefenstaffel.",    key:"layers"    },
+  { label:"mit Wiederholungen",             short:"Wiederholungen",    key:"repeat"    },
+  { label:"mit natürlichem Rahmen",         short:"Natürl. Rahmen",    key:"frame"     },
+  { label:"mit Isolation",                  short:"Isolation",         key:"isolation" },
+  { label:"mit zentraler Komposition",      short:"Zentral",           key:"central"   },
+  { label:"mit asymmetrischer Balance",     short:"Asymmetrie",        key:"asymmetry" },
 ];
 
-// ── Formate ─────────────────────────────────────────────────────────────────
-const formats = [
-  "im Hochformat", "im Querformat", "quadratisch gedacht", "frei",
+// ── MOODS — add new moods here ────────────────────────────────────────────────
+const moods = [
+  "Ruhe","Distanz","Ordnung","Chaos","Bewegung",
+  "Warten","Einsamkeit","Wärme","Kälte","Stille",
+  "Urbanität","Nostalgie","Melancholie","Spannung",
 ];
 
-// ── Mottos ──────────────────────────────────────────────────────────────────
-const mottos = [
-  "Stille", "Störung", "Nähe", "Distanz", "Ordnung", "Chaos",
-  "Bewegung", "Warten", "Kälte", "Wärme", "Spuren", "Zufall",
-  "Kontrast", "Leere", "Schwelle", "Augenblick",
-];
-
-// ── Kontextuelle Tipps ───────────────────────────────────────────────────────
-// Schlüssel entspricht technique.key; "default" greift immer als Fallback.
-const tipsByKey = {
-  blur: [
-    "Öffne die Blende weit und achte darauf, was im Fokus bleibt – das ist dein Bild.",
-    "Geh nah ran und lass den Hintergrund in sanfte Unschärfe fallen.",
-  ],
-  sharp: [
-    "Nutze eine kleine Blende, um alles scharf zu halten – von vorne bis hinten.",
-    "Achte auf klare Kanten und vermeide störende Elemente im Bild.",
-  ],
-  longexp: [
-    "Nutze ein Stativ oder lege die Kamera auf einem festen Untergrund ab.",
-    "Beobachte, wie Bewegung im Bild weich wird – Wasser, Licht, Menschen.",
-  ],
-  shortexp: [
-    "Friere Bewegung ein. Suche einen Moment, der normalerweise zu schnell ist.",
-    "Reagiere schnell. Das Bild entsteht in einem Bruchteil einer Sekunde.",
-  ],
-  highiso: [
-    "Lass das Korn zu einem Teil des Bildes werden – bekämpfe es nicht.",
-    "Arbeite bei schwachem Licht und akzeptiere das Rauschen als Stil.",
-  ],
-  mf: [
-    "Fokussiere bewusst – entscheide, was scharf ist und was nicht.",
-    "Nimm dir Zeit. Manueller Fokus zwingt dich zur Langsamkeit.",
-  ],
-  motion: [
-    "Nutze vorhandenes Licht, halte die Kamera ruhig und achte auf Bewegungen im Bild.",
-    "Panne mit dem Motiv mit – lass den Hintergrund unscharf werden.",
-  ],
-  hardlight: [
-    "Suche harte Schatten und nutze sie als Kompositionselement.",
-    "Fotografiere zur Mittagszeit oder unter direktem Kunstlicht.",
-  ],
-  softlight: [
-    "Weiches Licht entsteht an bewölkten Tagen oder in der Nähe von Fenstern.",
-    "Vermeide direkte Sonne – suche schattige, indirekte Lichtquellen.",
-  ],
-  default: [
-    "Geh nah ans Motiv, suche einen ruhigen Hintergrund und lass nur eine Farbe dominieren.",
-    "Fotografiere mehrere Varianten, aber entscheide dich am Ende für das ruhigste Bild.",
-    "Halte die Kamera ruhig und suche nach Wiederholungen im Bild.",
-    "Beobachte erst, dann fotografiere. Das beste Bild entsteht oft im dritten Versuch.",
-    "Lass eine Farbe dominieren und entferne alles, was ablenkt.",
+// ── TIP SYSTEM ────────────────────────────────────────────────────────────────
+// Key matches lighting.key, perspective.key or composition.key.
+// Add new keys or extend existing arrays freely.
+const tips = {
+  hard:       ["Achte bewusst auf Schatten und nutze harte Kontraste als Gestaltungsmittel.",
+               "Hartes Licht erzeugt scharfe Schatten – suche sie gezielt im Bild."],
+  cold:       ["Kaltes Licht wirkt distanziert – halte das Motiv klein und gib dem Raum Gewicht.",
+               "Suche nach blauen Tönen und nutze sie als Stimmungsträger."],
+  warm:       ["Warmes Licht lädt ein – suche Momente, in denen es auf Oberflächen liegt.",
+               "Fotografiere kurz nach Sonnenauf- oder -untergang im goldenen Licht."],
+  backlight:  ["Nutze Gegenlicht für Silhouetten – positioniere dein Motiv vor der Lichtquelle.",
+               "Achte auf Lens-Flare als bewusstes Kompositionselement."],
+  diffuse:    ["Diffuses Licht ist weich und gleichmäßig – ideal für Texturen und ruhige Details.",
+               "Bewölkte Tage sind perfekt für tonige, atmosphärische Aufnahmen."],
+  neon:       ["Suche nach Reflexionen auf nassen Oberflächen – sie verdoppeln das Licht.",
+               "Neonlicht und Nacht: halte nach Kontrasten zwischen Licht und Dunkel Ausschau."],
+  artificial: ["Künstliches Licht erzeugt Farbstiche – nutze sie bewusst als Stilmittel.",
+               "Achte auf die Mischung verschiedener Lichtquellen im selben Bild."],
+  soft:       ["Weiches Licht verzeiht viel – konzentriere dich auf Komposition und Inhalt.",
+               "Suche Fenster oder offene Schatten als natürliche Softboxen."],
+  morning:    ["Morgenlicht ist kurz und kostbar – sei früh da, beobachte zuerst.",
+               "Das erste Licht legt lange Schatten – nutze sie als Struktur im Bild."],
+  evening:    ["Abendlicht ist warm und tief – suche Gegenlicht und lange Schatten.",
+               "Die Stunde vor Sonnenuntergang gehört dir – nutze sie vollständig."],
+  negative:   ["Lass große Flächen leer und reduziere das Bild auf ein einziges Element.",
+               "Halte das Motiv klein im Bild und gib der Umgebung bewusst Raum."],
+  frame:      ["Nutze Fenster, Türen oder Äste, um dein Motiv einzurahmen.",
+               "Natürliche Rahmen leiten das Auge – suche sie aktiv im Bild."],
+  close:      ["Aus extremer Nähe zeigen sich Texturen, die sonst unsichtbar bleiben.",
+               "Geh näher als du denkst – und dann noch einen Schritt weiter."],
+  through:    ["Nutze Reflexionen oder Glasflächen für zusätzliche Tiefe.",
+               "Was liegt hinter dem Vordergrund? Nutze es als Bildebene."],
+  sym:        ["Symmetrie wirkt stark – suche sie in Architektur, Wasser, Schatten.",
+               "Ein winziger Versatz zerstört Symmetrie – sei präzise."],
+  repeat:     ["Suche nach Wiederholungen und ruhigen Formen im Alltag.",
+               "Muster entstehen oft erst, wenn man einen Schritt zurücktritt."],
+  default:    [
+    "Beobachte zuerst das Licht, bevor du fotografierst.",
+    "Suche nach Linien, die dein Bild leiten.",
+    "Lass den Himmel – oder eine große Fläche – Raum zum Atmen.",
+    "Einfaches Motiv, starke Wirkung – reduziere, bis nichts mehr fehlt.",
+    "Details erzählen oft die besten Geschichten.",
+    "Mach einen Schritt zurück. Dann noch einen.",
+    "Beobachte zuerst. Dann drücke ab.",
   ],
 };
 
-// ── Filter-Gewichtungen ──────────────────────────────────────────────────────
-const filterWeights = {
-  zufall: {
-    subjects, colors, perspectives, techniques,
-  },
+function getTip(lighting, perspective, composition) {
+  const pool =
+    tips[composition.key] ||
+    tips[perspective.key]  ||
+    tips[lighting.key]     ||
+    tips.default;
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+// ── FILTER PRESETS ────────────────────────────────────────────────────────────
+const filterPresets = {
+  zufall:  { subjects, lightings, perspectives, compositions, moods },
   minimal: {
-    subjects: ["ein Detail", "eine leere Fläche", "eine Linie", "einen Schatten", "eine Textur", "ein Muster"],
-    colors: colors.filter(c => ["Schwarzweiß", "Pastell", "eine dominante Farbe"].includes(c.label)),
-    perspectives: ["streng symmetrisch", "mit viel negativem Raum", "auf Augenhöhe", "aus extremer Nähe"],
-    techniques: techniques.filter(t => ["blur", "sharp", "softlight"].includes(t.key)),
-  },
-  technisch: {
-    subjects,
-    colors,
-    perspectives,
-    techniques: techniques.filter(t => ["blur","sharp","longexp","shortexp","highiso","mf","motion"].includes(t.key)),
+    subjects: ["ein Detail","eine leere Fläche","eine Linie","eine Struktur","eine Textur","ein Muster"],
+    lightings: lightings.filter(l => ["soft","diffuse","cold","morning"].includes(l.key)),
+    perspectives: perspectives.filter(p => ["eye","close","sym","far"].includes(p.key)),
+    compositions: compositions.filter(c => ["negative","minimal","isolation","central"].includes(c.key)),
+    moods: ["Ruhe","Stille","Ordnung","Distanz","Einsamkeit"],
   },
   story: {
-    subjects: ["eine Bewegung","einen Moment des Wartens","eine Silhouette","etwas Alltägliches","eine Spur","eine Lichtquelle"],
-    colors,
-    perspectives: ["auf Augenhöhe","aus der Hüfte","aus extremer Nähe","durch etwas hindurch"],
-    techniques: techniques.filter(t => ["blur","softlight","motion"].includes(t.key)),
+    subjects: ["eine Bewegung","eine Silhouette","einen Übergang","etwas Alltägliches","einen Kontrast","eine Lichtquelle"],
+    lightings: lightings.filter(l => ["morning","evening","warm","backlight","soft"].includes(l.key)),
+    perspectives: perspectives.filter(p => ["eye","hip","frog","through"].includes(p.key)),
+    compositions: compositions.filter(c => ["layers","frame","asymmetry","central","negative"].includes(c.key)),
+    moods: ["Warten","Nostalgie","Einsamkeit","Melancholie","Spannung","Bewegung","Wärme"],
+  },
+  urban: {
+    subjects: ["eine Spiegelung","eine Linie","eine Struktur","einen Kontrast","eine Lichtquelle","einen Schatten","eine Form"],
+    lightings: lightings.filter(l => ["neon","artificial","hard","cold","backlight"].includes(l.key)),
+    perspectives: perspectives.filter(p => ["bird","frog","diag","through","sym"].includes(p.key)),
+    compositions: compositions.filter(c => ["symmetry","diagonal","repeat","central","layers"].includes(c.key)),
+    moods: ["Urbanität","Spannung","Kälte","Chaos","Ordnung"],
   },
 };
 
-// ── Hilfsfunktionen ──────────────────────────────────────────────────────────
+// ── UTILS ─────────────────────────────────────────────────────────────────────
 function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
-function getTip(key) {
-  const pool = tipsByKey[key] || tipsByKey.default;
-  return pick(pool);
-}
-
-function techniquePhrase(tech) {
-  if (tech.label === "Offene Blende")   return "mit offener Blende";
-  if (tech.label === "Lange Belichtung") return "mit langer Belichtung";
-  return "mit " + tech.label.toLowerCase();
-}
-
-function generate(filter) {
-  const w = filterWeights[filter];
-  const color     = pick(w.colors);
-  const technique = pick(w.techniques);
+function generate(filterKey) {
+  const f = filterPresets[filterKey];
+  const lighting    = pick(f.lightings);
+  const perspective = pick(f.perspectives);
+  const composition = pick(f.compositions);
   return {
-    subject:     pick(w.subjects),
-    color,
-    perspective: pick(w.perspectives),
-    technique,
-    format:      pick(formats),
-    motto:       pick(mottos),
-    tip:         getTip(technique.key),
+    subject: pick(f.subjects),
+    lighting, perspective, composition,
+    mood: pick(f.moods),
+    tip: getTip(lighting, perspective, composition),
   };
 }
 
-// ── DOM-Referenzen ───────────────────────────────────────────────────────────
-const $challenge    = document.getElementById('challenge');
-const $headline     = document.getElementById('headline');
-const $mottoText    = document.getElementById('motto-text');
-const $tipText      = document.getElementById('tip-text');
+// ── DOM REFS ──────────────────────────────────────────────────────────────────
+const $ch       = document.getElementById('challenge');
+const $headline = document.getElementById('headline');
+const $moodLbl  = document.getElementById('mood-label');
+const $tip      = document.getElementById('tip-text');
 
-// desktop meta
-const $colorDot     = document.getElementById('meta-color-dot');
-const $colorVal     = document.getElementById('meta-color-val');
-const $perspVal     = document.getElementById('meta-persp-val');
-const $techVal      = document.getElementById('meta-tech-val');
-const $techSub      = document.getElementById('meta-tech-sub');
-const $fmtVal       = document.getElementById('meta-fmt-val');
+const $dLight = document.getElementById('d-light');
+const $dPersp = document.getElementById('d-persp');
+const $dComp  = document.getElementById('d-comp');
+const $dMood  = document.getElementById('d-mood');
 
-// mobile meta
-const $colorDotM    = document.getElementById('meta-color-dot-m');
-const $colorValM    = document.getElementById('meta-color-val-m');
-const $perspValM    = document.getElementById('meta-persp-val-m');
-const $techValM     = document.getElementById('meta-tech-val-m');
-const $techSubM     = document.getElementById('meta-tech-sub-m');
-const $fmtValM      = document.getElementById('meta-fmt-val-m');
+const $mLight = document.getElementById('m-light');
+const $mPersp = document.getElementById('m-persp');
+const $mComp  = document.getElementById('m-comp');
+const $mMood  = document.getElementById('m-mood');
+const $mTip   = document.getElementById('m-tip');
 
-// ── Render ───────────────────────────────────────────────────────────────────
+// ── RENDER ────────────────────────────────────────────────────────────────────
 function render(c) {
-  const fmt = c.format.replace("im ", "").replace("gedacht", "").trim();
-
-  // Headline
+  // Headline: "[subject] / im [lighting (italic)] / [perspective] / [composition]."
   $headline.innerHTML =
-    `Fotografiere heute <span class="accent" style="color:${c.color.hex}">${c.subject}</span> ${c.perspective} ${techniquePhrase(c.technique)}.`;
+    `${c.subject}<br><em>im ${c.lighting.label}</em><br>${c.perspective.label}<br>${c.composition.label}.`;
 
-  // Motto
-  $mottoText.textContent = c.motto;
-
-  // Tip
-  $tipText.textContent = c.tip;
+  $moodLbl.textContent = c.mood.toUpperCase();
+  $tip.textContent = c.tip;
 
   // Desktop meta
-  $colorDot.style.background = c.color.hex;
-  $colorVal.textContent      = c.color.label;
-  $perspVal.textContent      = c.perspective;
-  $techVal.textContent       = c.technique.label;
-  $techSub.textContent       = c.technique.sub;
-  $fmtVal.textContent        = fmt;
+  $dLight.textContent = c.lighting.short;
+  $dPersp.textContent = c.perspective.short;
+  $dComp.textContent  = c.composition.short;
+  $dMood.textContent  = c.mood;
 
   // Mobile meta
-  $colorDotM.style.background = c.color.hex;
-  $colorValM.textContent      = c.color.label;
-  $perspValM.textContent      = c.perspective;
-  $techValM.textContent       = c.technique.label;
-  $techSubM.textContent       = c.technique.sub;
-  $fmtValM.textContent        = fmt;
+  $mLight.textContent = c.lighting.short;
+  $mPersp.textContent = c.perspective.short;
+  $mComp.textContent  = c.composition.short;
+  $mMood.textContent  = c.mood + "e Stimmung";
+  $mTip.textContent   = c.tip;
 }
 
-// ── State ────────────────────────────────────────────────────────────────────
+// ── ROLL ─────────────────────────────────────────────────────────────────────
 let currentFilter = 'zufall';
 
-function roll(filter) {
-  currentFilter = filter || currentFilter;
-  $challenge.classList.add('hidden');
+function roll(f) {
+  if (f) currentFilter = f;
+  $ch.classList.add('out');
   setTimeout(() => {
     render(generate(currentFilter));
-    $challenge.classList.remove('hidden');
-  }, 280);
+    $ch.classList.remove('out');
+  }, 330);
 }
 
-// ── Filter buttons ───────────────────────────────────────────────────────────
-function setActiveFilter(id) {
-  document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.filter === id);
-  });
-}
-
+// ── FILTER BUTTONS ────────────────────────────────────────────────────────────
 document.querySelectorAll('.filter-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    const f = btn.dataset.filter;
-    setActiveFilter(f);
-    roll(f);
+    document.querySelectorAll('.filter-btn').forEach(b =>
+      b.classList.toggle('active', b.dataset.f === btn.dataset.f)
+    );
+    roll(btn.dataset.f);
   });
 });
 
-// ── Generate button ───────────────────────────────────────────────────────────
+// ── GENERATE BTN ─────────────────────────────────────────────────────────────
 document.getElementById('gen-btn').addEventListener('click', () => roll());
 
-// ── Dark Mode ────────────────────────────────────────────────────────────────
-const $darkBtn = document.getElementById('dark-toggle');
+// ── DARK MODE ─────────────────────────────────────────────────────────────────
 let dark = false;
-$darkBtn.addEventListener('click', () => {
+document.getElementById('dark-toggle').addEventListener('click', () => {
   dark = !dark;
   document.body.classList.toggle('dark', dark);
-  $darkBtn.textContent = dark ? '☀' : '◑';
 });
 
-// ── Spacebar shortcut ─────────────────────────────────────────────────────────
+// ── SPACEBAR ─────────────────────────────────────────────────────────────────
 document.addEventListener('keydown', e => {
   if (e.code === 'Space' && e.target === document.body) {
-    e.preventDefault();
-    roll();
+    e.preventDefault(); roll();
   }
 });
 
-// ── Init ──────────────────────────────────────────────────────────────────────
+// ── INIT ─────────────────────────────────────────────────────────────────────
 render(generate('zufall'));
 </script>
 </body>

@@ -1,60 +1,51 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>DAILY</title>
-
-  <!-- PWA / Homescreen Icon -->
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-  <meta name="apple-mobile-web-app-title" content="DAILY" />
-  <meta name="theme-color" content="#0D0D0D" />
-
-  <!-- Inline app icon as SVG favicon -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230D0D0D'/><text y='67' x='50' text-anchor='middle' font-family='Georgia,serif' font-size='28' letter-spacing='6' fill='%23EDE0CC'>DAILY</text></svg>" />
-
-  <!-- Apple Touch Icon: embedded as data URI (1024×1024 equivalent via SVG) -->
-  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1024 1024'><rect width='1024' height='1024' rx='220' fill='%230D0D0D'/><text y='620' x='512' text-anchor='middle' font-family='Georgia,serif' font-size='280' letter-spacing='60' fill='%23EDE0CC'>DAILY</text></svg>" />
-
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400&display=swap" rel="stylesheet" />
-
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+  <meta name="apple-mobile-web-app-title" content="DAILY"/>
+  <meta name="theme-color" content="#0D0D0D"/>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230D0D0D'/><text y='67' x='50' text-anchor='middle' font-family='Georgia,serif' font-size='28' letter-spacing='6' fill='%23EDE0CC'>DAILY</text></svg>"/>
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1024 1024'><rect width='1024' height='1024' rx='220' fill='%230D0D0D'/><text y='620' x='512' text-anchor='middle' font-family='Georgia,serif' font-size='280' letter-spacing='60' fill='%23EDE0CC'>DAILY</text></svg>"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400&display=swap" rel="stylesheet"/>
   <style>
-
-    /* ─────────────────────────────────────────────────────────────
-       BASE
-    ───────────────────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg:         #F0EDE8;
-      --ink:        #1C1917;
-      --ink-muted:  #6B6560;
-      --ink-faint:  #AAA49D;
-      --accent:     #8B5E3C;
-      --sep:        #D0CBC3;
+      --bg:     #F0EDE8;
+      --ink:    #1C1917;
+      --muted:  #6B6560;
+      --faint:  #AAA49D;
+      --accent: #8B5E3C;
     }
-
     html, body {
       height: 100%;
       background: var(--bg);
       color: var(--ink);
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
-      transition: background 0.8s ease;
+      transition: background 0.9s ease, color 0.9s ease;
+    }
+    body { font-family: 'Inter', -apple-system, sans-serif; font-weight: 300; }
+
+    /* ── SVG background — full bleed, behind everything ── */
+    #bg-svg {
+      position: fixed;
+      inset: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      transition: opacity 0.9s ease;
     }
 
-    body {
-      font-family: 'Inter', -apple-system, sans-serif;
-      font-weight: 300;
-    }
-
-    /* ─────────────────────────────────────────────────────────────
-       SHELL
-    ───────────────────────────────────────────────────────────── */
+    /* ── Shell ── */
     #shell {
+      position: relative;
+      z-index: 1;
       min-height: 100vh;
       min-height: 100dvh;
       display: flex;
@@ -63,42 +54,31 @@
       max-width: 820px;
     }
 
-    /* ─────────────────────────────────────────────────────────────
-       HEADER — logo + timer on same line
-    ───────────────────────────────────────────────────────────── */
+    /* ── Header ── */
     #header {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
       flex-shrink: 0;
-      margin-bottom: 0;
     }
-
     #logo {
-      font-family: 'Inter', sans-serif;
       font-size: 10px;
       font-weight: 400;
       letter-spacing: 0.24em;
-      color: var(--ink-muted);
+      color: var(--muted);
       text-transform: uppercase;
     }
-
-    /* Timer — always visible, very quiet */
     #timer {
-      font-family: 'Inter', sans-serif;
       font-size: 10px;
       font-weight: 300;
       letter-spacing: 0.08em;
-      color: var(--ink-faint);
+      color: var(--faint);
       font-variant-numeric: tabular-nums;
-      /* so numbers don't jump in width */
-      min-width: 72px;
+      min-width: 80px;
       text-align: right;
     }
 
-    /* ─────────────────────────────────────────────────────────────
-       MAIN CONTENT
-    ───────────────────────────────────────────────────────────── */
+    /* ── Content ── */
     #content {
       flex: 1;
       display: flex;
@@ -106,21 +86,13 @@
       justify-content: center;
       padding: 52px 0 16px;
     }
-
-    /* Fade transition */
     #prompt-wrap {
       opacity: 1;
       transform: translateY(0);
       transition: opacity 0.55s ease, transform 0.55s ease;
     }
-    #prompt-wrap.out {
-      opacity: 0;
-      transform: translateY(14px);
-    }
+    #prompt-wrap.out { opacity: 0; transform: translateY(14px); }
 
-    /* ─────────────────────────────────────────────────────────────
-       PROMPT — the main sentence
-    ───────────────────────────────────────────────────────────── */
     #prompt {
       font-family: 'Cormorant Garamond', Georgia, serif;
       font-size: clamp(36px, 5.8vw, 70px);
@@ -130,38 +102,22 @@
       color: var(--ink);
       margin-bottom: 36px;
     }
-
-    /* ─────────────────────────────────────────────────────────────
-       RULE — short em-dash line
-    ───────────────────────────────────────────────────────────── */
     .rule {
-      width: 30px;
-      height: 1.5px;
-      background: var(--ink-muted);
+      width: 30px; height: 1.5px;
+      background: var(--muted);
       opacity: 0.4;
       margin-bottom: 26px;
     }
-
-    /* ─────────────────────────────────────────────────────────────
-       REFLECTION — quiet tip
-    ───────────────────────────────────────────────────────────── */
     #reflection {
       font-family: 'Cormorant Garamond', Georgia, serif;
       font-size: clamp(15px, 1.9vw, 20px);
       font-weight: 400;
       line-height: 1.55;
-      color: var(--ink-muted);
+      color: var(--muted);
       max-width: 400px;
       margin-bottom: 52px;
     }
-
-    /* ─────────────────────────────────────────────────────────────
-       QUOTE BLOCK — always present in DAILY
-    ───────────────────────────────────────────────────────────── */
-    #quote-block {
-      max-width: 400px;
-    }
-
+    #quote-block { max-width: 420px; }
     #quote-mark {
       font-family: 'Cormorant Garamond', Georgia, serif;
       font-size: 26px;
@@ -170,30 +126,25 @@
       margin-bottom: 10px;
       opacity: 0.8;
     }
-
     #quote-text {
       font-family: 'Cormorant Garamond', Georgia, serif;
       font-size: clamp(14px, 1.75vw, 18px);
       font-weight: 400;
       font-style: italic;
       line-height: 1.65;
-      color: var(--ink-muted);
+      color: var(--muted);
       margin-bottom: 14px;
     }
-
     #quote-author {
-      font-family: 'Inter', sans-serif;
       font-size: 9px;
       font-weight: 400;
       letter-spacing: 0.2em;
-      color: var(--ink-faint);
+      color: var(--faint);
       text-transform: uppercase;
     }
     #quote-author::before { content: "— "; }
 
-    /* ─────────────────────────────────────────────────────────────
-       FOOTER — date indicator, very quiet
-    ───────────────────────────────────────────────────────────── */
+    /* ── Footer ── */
     #footer {
       flex-shrink: 0;
       padding-top: 32px;
@@ -201,159 +152,125 @@
       justify-content: space-between;
       align-items: flex-end;
     }
-
     #date-label {
-      font-family: 'Inter', sans-serif;
       font-size: 9px;
       font-weight: 300;
       letter-spacing: 0.14em;
-      color: var(--ink-faint);
+      color: var(--faint);
       opacity: 0.6;
     }
-
-    /* Subtle dot — visual anchor like in the moodboard */
     #dot {
-      width: 4px;
-      height: 4px;
+      width: 4px; height: 4px;
       border-radius: 50%;
       background: var(--ink);
       opacity: 0.15;
     }
 
-    /* ─────────────────────────────────────────────────────────────
-       RESPONSIVE
-    ───────────────────────────────────────────────────────────── */
     @media (max-width: 600px) {
       #shell   { padding: 28px 30px 28px; }
       #content { padding: 44px 0 12px; }
       #prompt  { margin-bottom: 28px; }
       #reflection { margin-bottom: 40px; }
     }
-
     @media (max-width: 380px) {
       #shell { padding: 24px 22px 22px; }
     }
-
   </style>
 </head>
 <body>
 
-<div id="shell">
+<!-- Full-bleed SVG background — redrawn each day -->
+<svg id="bg-svg" viewBox="0 0 390 844" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <g id="bg-layer"></g>
+</svg>
 
-  <!-- Header: logo left, timer right -->
+<div id="shell">
   <div id="header">
     <span id="logo">Daily</span>
     <span id="timer">—</span>
   </div>
-
-  <!-- Main content -->
   <div id="content">
     <div id="prompt-wrap">
-
-      <!-- The daily prompt -->
       <p id="prompt"></p>
-
-      <!-- Short rule -->
       <div class="rule"></div>
-
-      <!-- Quiet reflection -->
       <p id="reflection"></p>
-
-      <!-- Quote — always shown in DAILY -->
       <div id="quote-block">
         <div id="quote-mark">"</div>
         <p id="quote-text"></p>
         <span id="quote-author"></span>
       </div>
-
     </div>
   </div>
-
-  <!-- Footer -->
   <div id="footer">
     <span id="date-label"></span>
     <div id="dot"></div>
   </div>
-
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════════
-  GENERATOR & TIMER
-  New prompt every day at 06:00 Vienna time.
-  Seed is the current Vienna date string → same date = same prompt.
-════════════════════════════════════════════════════════════════════ -->
 <script>
 'use strict';
 
-// ────────────────────────────────────────────────────────────────────────────
-// DATA ARRAYS
-// Add new entries freely. Seed picks deterministically so adding entries
-// shifts future days but never breaks existing ones.
-// ────────────────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════
+// DATA — add new entries to any array to extend the app
+// ═══════════════════════════════════════════════════════════════════════════
 
-// SUBJECTS — what to photograph
 const subjects = [
-  "eine Spiegelung",
-  "einen Schatten",
-  "eine Linie",
-  "eine Struktur",
-  "eine Bewegung",
-  "eine Lichtquelle",
-  "ein Detail",
-  "eine Silhouette",
-  "ein Muster",
-  "eine leere Fläche",
-  "einen Übergang",
-  "einen Kontrast",
-  "eine Form",
-  "etwas Alltägliches",
-  "eine Textur",
+  "eine Spiegelung","einen Schatten","eine Linie","eine Struktur","eine Bewegung",
+  "eine Lichtquelle","ein Detail","eine Silhouette","ein Muster","eine leere Fläche",
+  "einen Übergang","einen Kontrast","eine Form","etwas Alltägliches","eine Textur",
+  "einen Moment des Wartens","eine Hand","ein Fenster","eine Tür","einen Weg",
+  "ein Gesicht das sich abwendet","eine Geste","einen Rand","etwas Vergängliches",
+  "eine Grenze","einen Anfang","ein Ende","etwas Verborgenes","einen Zwischenraum",
+  "eine Stille","ein Gewicht","etwas Kaputtes","einen Blick","eine Begegnung","etwas Fremdes",
 ];
 
-// LIGHTINGS — how it is lit
-// mood: controls subtle background tint (cold / warm / neutral / cool)
 const lightings = [
-  { phrase: "im kalten Morgenlicht",   mood: "cold"    },
-  { phrase: "im warmen Abendlicht",    mood: "warm"    },
-  { phrase: "im Gegenlicht",           mood: "neutral" },
-  { phrase: "im diffusen Licht",       mood: "neutral" },
-  { phrase: "im Neonlicht",            mood: "cool"    },
-  { phrase: "im künstlichen Licht",    mood: "cool"    },
-  { phrase: "im harten Mittagslicht",  mood: "warm"    },
-  { phrase: "im weichen Licht",        mood: "neutral" },
-  { phrase: "im ersten Morgenlicht",   mood: "warm"    },
-  { phrase: "im letzten Tageslicht",   mood: "warm"    },
+  { phrase:"im Morgenlicht",          mood:"warm"    },
+  { phrase:"im Abendlicht",           mood:"warm"    },
+  { phrase:"im Gegenlicht",           mood:"neutral" },
+  { phrase:"im diffusen Licht",       mood:"neutral" },
+  { phrase:"im Neonlicht",            mood:"cool"    },
+  { phrase:"im künstlichen Licht",    mood:"cool"    },
+  { phrase:"im Mittagslicht",         mood:"warm"    },
+  { phrase:"im weichen Licht",        mood:"neutral" },
+  { phrase:"im Schatten",             mood:"cold"    },
+  { phrase:"im Halbdunkel",           mood:"cold"    },
+  { phrase:"bei Regen",               mood:"cold"    },
+  { phrase:"bei bewölktem Himmel",    mood:"neutral" },
+  { phrase:"im Kerzenlicht",          mood:"warm"    },
+  { phrase:"im Scheinwerferlicht",    mood:"cool"    },
+  { phrase:"in der Dämmerung",        mood:"neutral" },
+  { phrase:"bei Nacht",               mood:"cold"    },
 ];
 
-// PERSPECTIVES — how to look
 const perspectives = [
-  "aus der Froschperspektive",
-  "aus der Vogelperspektive",
-  "auf Augenhöhe",
-  "aus extremer Nähe",
-  "durch etwas hindurch",
-  "mit viel Abstand",
-  "diagonal komponiert",
-  "symmetrisch",
-  "aus der Hüfte",
+  "aus der Froschperspektive","aus der Vogelperspektive","auf Augenhöhe",
+  "aus extremer Nähe","durch etwas hindurch","mit viel Abstand",
+  "diagonal komponiert","symmetrisch","aus der Hüfte",
+  "vom Boden aus","von oben","dicht an der Wand",
+  "aus dem Augenwinkel","hinter etwas hervor","aus dem Inneren heraus",
+  "mit einem einzigen Blickpunkt",
 ];
 
-// COMPOSITIONS — how to frame
 const compositions = [
-  "mit viel negativem Raum",
-  "mit Symmetrie",
-  "mit diagonalen Linien",
-  "mit minimalistischem Bildaufbau",
-  "mit Vordergrund und Hintergrund",
-  "mit Wiederholungen",
-  "mit natürlichem Rahmen",
-  "mit Isolation",
-  "mit zentraler Komposition",
-  "mit asymmetrischer Balance",
+  "mit viel negativem Raum","mit Symmetrie","mit diagonalen Linien",
+  "mit minimalistischem Bildaufbau","mit Vordergrund und Hintergrund",
+  "mit Wiederholungen","mit natürlichem Rahmen","mit Isolation",
+  "mit zentraler Komposition","mit asymmetrischer Balance",
+  "mit einem einzigen Punkt im Bild","mit Bewegung im Hintergrund",
+  "ohne Horizont","mit einer einzigen Lichtquelle",
+  "am Rand des Bildes","fast außerhalb des Rahmens",
+  "mit Unschärfe als Aussage","mit dem Motiv klein im Bild",
 ];
 
-// REFLECTIONS — quiet tips, one per prompt
-// Keep them short, calm, almost handwritten in feel.
+const templates = [
+  (s,l,p,c) => `Fotografiere heute\n${s}\n${l}\n${c}.`,
+  (s,l,p,c) => `Fotografiere heute\n${s}\n${p}\n${l}.`,
+  (s,l,p,c) => `Geh heute raus\nund such\n${s}\n${c}.`,
+  (s,l,p,c) => `Heute nur das:\n${s}\n${l}.`,
+  (s,l,p,c) => `Sieh heute genau hin.\n${s}\n${p}\n${c}.`,
+];
+
 const reflections = [
   "Beobachte zuerst das Licht,\nbevor du fotografierst.",
   "Lass große Flächen leer und\nkonzentriere dich auf ein einziges Element.",
@@ -371,271 +288,635 @@ const reflections = [
   "Nicht jede Aufnahme muss\netwas sagen. Manchmal genügt sie.",
 ];
 
-// QUOTES — real quotes, always shown in DAILY.
-// Only real, attributed quotes. Never generated.
-// Preferred: photographers, writers, filmmakers.
 const quotes = [
-  {
-    text: "There are things nobody would see\nif I didn't photograph them.",
-    author: "Diane Arbus",
-  },
-  {
-    text: "I don't pay attention to the world\nenough except through my camera.",
-    author: "Saul Leiter",
-  },
-  {
-    text: "Photography is a way of feeling,\nof touching, of loving.",
-    author: "Aaron Siskind",
-  },
-  {
-    text: "I only know how to approach a place\nby walking.",
-    author: "Saul Leiter",
-  },
-  {
-    text: "A photograph is a secret\nabout a secret.",
-    author: "Diane Arbus",
-  },
-  {
-    text: "The camera is an excuse\nto be someplace you otherwise don't belong.",
-    author: "Susan Meiselas",
-  },
-  {
-    text: "I am always mentally photographing\neverything as practice.",
-    author: "Minor White",
-  },
-  {
-    text: "There is nothing worse than\na sharp image of a fuzzy concept.",
-    author: "Ansel Adams",
-  },
-  {
-    text: "You don't take a photograph,\nyou make it.",
-    author: "Ansel Adams",
-  },
-  {
-    text: "To me, photography is an art\nof observation.",
-    author: "Elliott Erwitt",
-  },
-  {
-    text: "The best images are the ones\nthat retain their strength over time.",
-    author: "Anne Geddes",
-  },
-  {
-    text: "Light makes photography.\nEmbrace it. Admire it. Love it.",
-    author: "George Eastman",
-  },
-  {
-    text: "In photography, the smallest thing\ncan be a great subject.",
-    author: "Henri Cartier-Bresson",
-  },
-  {
-    text: "Your first 10,000 photographs\nare your worst.",
-    author: "Henri Cartier-Bresson",
-  },
-  {
-    text: "To photograph is to hold one's breath,\nwhen all faculties converge.",
-    author: "Henri Cartier-Bresson",
-  },
-  {
-    text: "Photography is the simplest thing\nin the world, but it is incredibly complicated.",
-    author: "Martin Parr",
-  },
-  {
-    text: "Taking pictures is savoring life\nintensely, every hundredth of a second.",
-    author: "Marc Riboud",
-  },
-  {
-    text: "Landscape photography is the supreme test\nof the photographer.",
-    author: "Ansel Adams",
-  },
+  // Fotografen
+  { text:"Your first 10,000 photographs are your worst.", author:"Henri Cartier-Bresson" },
+  { text:"To photograph is to hold one's breath, when all faculties converge to capture fleeting reality.", author:"Henri Cartier-Bresson" },
+  { text:"In photography, the smallest thing can be a great subject.", author:"Henri Cartier-Bresson" },
+  { text:"Thinking should be done before and after, not during photographing.", author:"Henri Cartier-Bresson" },
+  { text:"The photograph itself doesn't interest me. I want only to capture a minute part of reality.", author:"Henri Cartier-Bresson" },
+  { text:"To me, photography is the simultaneous recognition, in a fraction of a second, of the significance of an event.", author:"Henri Cartier-Bresson" },
+  { text:"You don't take a photograph, you make it.", author:"Ansel Adams" },
+  { text:"There are no rules for good photographs, there are only good photographs.", author:"Ansel Adams" },
+  { text:"A great photograph is one that fully expresses what one feels, in the deepest sense, about what is being photographed.", author:"Ansel Adams" },
+  { text:"When words become unclear, I shall focus with photographs.", author:"Ansel Adams" },
+  { text:"Not everybody trusts paintings but people believe photographs.", author:"Ansel Adams" },
+  { text:"There are things nobody would see if I didn't photograph them.", author:"Diane Arbus" },
+  { text:"A photograph is a secret about a secret. The more it tells you, the less you know.", author:"Diane Arbus" },
+  { text:"I never have taken a picture I've intended. They're always better or worse.", author:"Diane Arbus" },
+  { text:"The camera is a kind of license. A lot of people with cameras are invisible.", author:"Diane Arbus" },
+  { text:"My favorite thing is to go where I've never been.", author:"Diane Arbus" },
+  { text:"I don't pay attention to the world enough except through my camera.", author:"Saul Leiter" },
+  { text:"I only know how to approach a place by walking.", author:"Saul Leiter" },
+  { text:"In order to build a body of work you have to preserve a great deal of time for doing nothing.", author:"Saul Leiter" },
+  { text:"I have a feeling that I make things up and then go out and find them.", author:"Saul Leiter" },
+  { text:"There is never enough time to explore what we want to explore.", author:"Saul Leiter" },
+  { text:"The camera is an instrument that teaches people how to see without a camera.", author:"Dorothea Lange" },
+  { text:"Pick a theme and work it to exhaustion — the subject must be something you truly love or truly hate.", author:"Dorothea Lange" },
+  { text:"One should really use the camera as though tomorrow you'd be stricken blind.", author:"Dorothea Lange" },
+  { text:"A camera is a tool for learning how to see without a camera.", author:"Dorothea Lange" },
+  { text:"When people look at my pictures I want them to feel the way they do when they want to read a line of a poem twice.", author:"Robert Frank" },
+  { text:"There is one thing the photograph must contain, the humanity of the moment.", author:"Robert Frank" },
+  { text:"Black and white are the colors of photography. To me they symbolize the alternatives of hope and despair.", author:"Robert Frank" },
+  { text:"I have been frequently accused of deliberately twisting subject matter to my point of view.", author:"Robert Frank" },
+  { text:"You have to be able to see the picture before it's there.", author:"Vivian Maier" },
+  { text:"I am sort of a spy.", author:"Vivian Maier" },
+  { text:"I keep on going, as long as the black car isn't following me.", author:"Vivian Maier" },
+  { text:"I am merely one eye in the city's thousand eyes.", author:"Daido Moriyama" },
+  { text:"For me, photography is not a means of documenting places or events but an expression of desire.", author:"Daido Moriyama" },
+  { text:"I keep taking photographs because I want to know what the world looks like.", author:"Daido Moriyama" },
+  { text:"The street is my home and I am a stray dog wandering through it.", author:"Daido Moriyama" },
+  { text:"I photograph to find out what something looks like photographed.", author:"Josef Koudelka" },
+  { text:"I have no home. My home is this camera and my life.", author:"Josef Koudelka" },
+  { text:"Work, work, work. That is what photography is.", author:"Josef Koudelka" },
+  { text:"Stare. It is the way to educate your eye, and more. Stare, pry, listen, eavesdrop.", author:"Walker Evans" },
+  { text:"The thing I'm trying to find is the image that is clean, simple, and meaningful.", author:"Walker Evans" },
+  { text:"There are really very few photographers. Most people with cameras are just shooting.", author:"Walker Evans" },
+  { text:"It is the instinctive choice of a visual mind.", author:"Walker Evans" },
+  { text:"I photograph to find out what something will look like photographed.", author:"Garry Winogrand" },
+  { text:"There is nothing as mysterious as a fact clearly described.", author:"Garry Winogrand" },
+  { text:"I like to think of photographing as a two-way act of respect.", author:"Garry Winogrand" },
+  { text:"All the mistakes are there, waiting to be made.", author:"Garry Winogrand" },
+  { text:"I am at war with the obvious.", author:"William Eggleston" },
+  { text:"I had this notion of what I called a democratic way of looking around.", author:"William Eggleston" },
+  { text:"Everything is a subject. Every subject has a rhythm.", author:"William Eggleston" },
+  { text:"I am not interested in shooting new things. I am interested to see things new.", author:"Ernst Haas" },
+  { text:"A picture is the expression of an impression.", author:"Ernst Haas" },
+  { text:"There is only you and your camera. The limitations in your photography are in yourself.", author:"Ernst Haas" },
+  { text:"Photography is not objective. It is deeply subjective.", author:"Sebastião Salgado" },
+  { text:"The camera is my tool. Through it I give a reason to everything around me.", author:"Sebastião Salgado" },
+  { text:"Each photograph is a certificate of presence.", author:"Sebastião Salgado" },
+  { text:"I am an image hunter. I hunt images like one hunts animals.", author:"Ed van der Elsken" },
+  { text:"Life is beautiful and terrible at the same time.", author:"Ed van der Elsken" },
+  { text:"I photograph the world as I see it. Nothing more, nothing less.", author:"Ed van der Elsken" },
+  { text:"A photo is a moment lived twice — once in reality, once in memory.", author:"Fan Ho" },
+  { text:"Light is the language I speak.", author:"Fan Ho" },
+  { text:"I search for simplicity in the city. It is always there, waiting.", author:"Fan Ho" },
+  // Schriftsteller / Filmemacher
+  { text:"I live my life in widening circles that reach out across the world.", author:"Rainer Maria Rilke" },
+  { text:"Perhaps all the dragons in our lives are princesses who are only waiting to see us act with beauty and courage.", author:"Rainer Maria Rilke" },
+  { text:"The only journey is the one within.", author:"Rainer Maria Rilke" },
+  { text:"I want to be with those who know secret things or else alone.", author:"Rainer Maria Rilke" },
+  { text:"Everything is far and long gone by.", author:"Rainer Maria Rilke" },
+  { text:"Beauty is nothing but the beginning of terror.", author:"Rainer Maria Rilke" },
+  { text:"We need, in love, to practice only this: letting each other go.", author:"Rainer Maria Rilke" },
+  { text:"Go into yourself and see how deep the place is from which your life flows.", author:"Rainer Maria Rilke" },
+  { text:"I'm the gap between my desire and what life has made of me.", author:"Fernando Pessoa" },
+  { text:"To live is to be other. It isn't even possible to feel, if one feels today what one felt yesterday.", author:"Fernando Pessoa" },
+  { text:"Literature is the most agreeable way of ignoring life.", author:"Fernando Pessoa" },
+  { text:"Everything is worthwhile if the soul is not small.", author:"Fernando Pessoa" },
+  { text:"To know nothing is everything. To feel nothing is health.", author:"Fernando Pessoa" },
+  { text:"I was not made for reality, but I get along with it.", author:"Fernando Pessoa" },
+  { text:"I'm the space between what I want and what life has allowed me.", author:"Fernando Pessoa" },
+  { text:"In the depths of winter, I finally learned that within me there lay an invincible summer.", author:"Albert Camus" },
+  { text:"You will never be happy if you continue to search for what happiness consists of.", author:"Albert Camus" },
+  { text:"In order to understand the world, one has to turn away from it on occasion.", author:"Albert Camus" },
+  { text:"A man's work is nothing but this slow trek to rediscover, through the detours of art, those two or three great and simple images in whose presence his heart first opened.", author:"Albert Camus" },
+  { text:"Autumn is a second spring when every leaf is a flower.", author:"Albert Camus" },
+  { text:"The absurd is the essential concept and the first truth.", author:"Albert Camus" },
+  { text:"The only way to deal with an unfree world is to become so absolutely free that your very existence is an act of rebellion.", author:"Albert Camus" },
+  { text:"The allotted function of art is not to put across ideas, to propagate thoughts, to serve as example. The aim of art is to prepare a person for death, to plough and harrow his soul.", author:"Andrei Tarkovsky" },
+  { text:"Ultimately, the moral sense of art is the sense of the eternal.", author:"Andrei Tarkovsky" },
+  { text:"I think that what a person normally goes to the cinema for is time — for time lost or spent or not yet had.", author:"Andrei Tarkovsky" },
+  { text:"The image is not a certain meaning, expressed by the director, but an entire world reflected as in a drop of water.", author:"Andrei Tarkovsky" },
+  { text:"Sculpting in time. That is what a film is.", author:"Andrei Tarkovsky" },
+  { text:"The beautiful is hidden from the eyes of those who do not search for the truth.", author:"Andrei Tarkovsky" },
+  { text:"What is Art? Art is like a declaration of love: consciousness of our dependence on each other.", author:"Andrei Tarkovsky" },
+  { text:"Time, printed in its visible forms.", author:"Andrei Tarkovsky" },
+  { text:"Photography is a certificate of presence.", author:"Roland Barthes" },
+  { text:"What the photograph reproduces to infinity has occurred only once: the photograph mechanically repeats what could never be repeated existentially.", author:"Roland Barthes" },
+  { text:"The photograph is violent: not because it shows violent things, but because on each occasion it fills the sight by force.", author:"Roland Barthes" },
+  { text:"The punctum of a photograph is that accident which pricks me, bruises me, is poignant to me.", author:"Roland Barthes" },
+  { text:"A photograph's noise is its silence.", author:"Roland Barthes" },
+  { text:"To scrutinize means to turn the photograph over, to enter the paper's depth, to reach its other side.", author:"Roland Barthes" },
+  { text:"In the photograph, Time's immobilization assumes only an excessive, monstrous mode.", author:"Roland Barthes" },
+  { text:"I have an incredible longing to see things I've never seen before.", author:"Wim Wenders" },
+  { text:"Images should be like dreams. And the best dreams are the ones you can't quite remember.", author:"Wim Wenders" },
+  { text:"Every road is a story. Every image is a question.", author:"Wim Wenders" },
+  { text:"The more I photograph, the less I know.", author:"Wim Wenders" },
+  { text:"Every photograph is a certificate of presence.", author:"Wim Wenders" },
+  { text:"I think the best photographs are the ones that have something of the quality of a dream.", author:"Wim Wenders" },
+  { text:"To photograph is to appropriate the thing photographed.", author:"Susan Sontag" },
+  { text:"The camera makes everyone a tourist in other people's reality, and eventually in one's own.", author:"Susan Sontag" },
+  { text:"Photographs are a way of imprisoning reality.", author:"Susan Sontag" },
+  { text:"Nobody ever discovers ugliness through photographs. But many, through photographs, have discovered beauty.", author:"Susan Sontag" },
+  { text:"Life is not about significant details, illuminated in a flash, fixed forever. Photographs are.", author:"Susan Sontag" },
+  { text:"In teaching us a new visual code, photographs alter and enlarge our notions of what is worth looking at.", author:"Susan Sontag" },
+  { text:"Photography implies that we know about the world if we accept it as the camera records it.", author:"Susan Sontag" },
+  { text:"There is infinite hope, but not for us.", author:"Franz Kafka" },
+  { text:"I am a cage, in search of a bird.", author:"Franz Kafka" },
+  { text:"Don't bend; don't water it down; don't try to make it logical; don't edit your own soul according to the fashion.", author:"Franz Kafka" },
+  { text:"In the fight between you and the world, back the world.", author:"Franz Kafka" },
+  { text:"A book must be the axe for the frozen sea within us.", author:"Franz Kafka" },
+  { text:"The real voyage of discovery consists not in seeking new landscapes, but in having new eyes.", author:"Marcel Proust" },
+  { text:"Happiness is beneficial for the body, but it is grief that develops the powers of the mind.", author:"Marcel Proust" },
+  { text:"Time passes, and little by little everything that we have spoken in falsehood becomes true.", author:"Marcel Proust" },
+  { text:"We are not provided with wisdom, we must discover it for ourselves, after a journey through the wilderness.", author:"Marcel Proust" },
+  { text:"Let us be grateful to the people who make us happy; they are the charming gardeners who make our souls blossom.", author:"Marcel Proust" },
+  { text:"I feel more and more as if time did not exist at all, only various spaces interlocking according to the rules of a higher form of stereometry.", author:"W.G. Sebald" },
+  { text:"The world is full of things and people that are almost invisible.", author:"W.G. Sebald" },
+  { text:"How little we can hold in mind, how everything is constantly lapsing into oblivion.", author:"W.G. Sebald" },
+  { text:"How often our perspective depends on where we stand.", author:"W.G. Sebald" },
+  { text:"No one can explain exactly what happens within us when the doors behind which our childhood terrors lurk are flung open.", author:"W.G. Sebald" },
+  { text:"All memories are traces of tears.", author:"Wong Kar-wai" },
+  { text:"Emotions don't die. They just go somewhere else.", author:"Wong Kar-wai" },
+  { text:"I don't believe in complete darkness. There is always a little light somewhere.", author:"Wong Kar-wai" },
+  { text:"The best images happen when you are not trying.", author:"Wong Kar-wai" },
+  { text:"No art passes our conscience in the way film does, and goes directly to our feelings, deep down into the dark rooms of our souls.", author:"Ingmar Bergman" },
+  { text:"Film as dream, film as music. No art passes our conscience in the way film does.", author:"Ingmar Bergman" },
+  { text:"I create images that frighten me, that disturb me, that I try to understand.", author:"Ingmar Bergman" },
+  { text:"The demons are innumerable, arrive at the most inappropriate times and create panic and terror.", author:"Ingmar Bergman" },
+  { text:"I hope I never get so old I get religious.", author:"Ingmar Bergman" },
+  { text:"I will have spent my life trying to understand the function of remembering, which is not the opposite of forgetting, but rather its lining.", author:"Chris Marker" },
+  { text:"A photograph is not necessarily a lie, but it isn't the truth either.", author:"Chris Marker" },
+  { text:"Memory is the enemy of time.", author:"Chris Marker" },
+  { text:"I wonder how you tell the difference between what you actually remember and what you only think you remember.", author:"Chris Marker" },
+  { text:"The world is outside language, but the world speaks.", author:"Peter Handke" },
+  { text:"Nothing is as comforting as the small particulars.", author:"Peter Handke" },
+  { text:"The moment I am alone, I begin to observe.", author:"Peter Handke" },
+  { text:"Slowness is a form of attention.", author:"Peter Handke" },
+  { text:"There is a kind of seeing that is like touching. And a kind of touching that is like seeing.", author:"Marguerite Duras" },
+  { text:"Solitude means being with oneself. It is not loneliness.", author:"Marguerite Duras" },
+  { text:"Writing is not recounting. It is the opposite.", author:"Marguerite Duras" },
+  { text:"The light of the afternoon is the most beautiful light.", author:"Marguerite Duras" },
+  { text:"You have to be very fond of men. Very, very fond. You have to be very fond of them to love them. Otherwise they're simply unbearable.", author:"Marguerite Duras" },
+  { text:"Writing is the act of giving shape to what is shapeless.", author:"Annie Ernaux" },
+  { text:"I see my life as a territory to explore.", author:"Annie Ernaux" },
+  { text:"Nothing ever disappears completely. Only transforms.", author:"Annie Ernaux" },
+  { text:"Memory is not a way of forgetting. It is a way of making things exist twice.", author:"Annie Ernaux" },
+  { text:"To walk is to lack a place. It is to be without a roof over your head.", author:"Robert Walser" },
+  { text:"The world is beautiful, even when it rains.", author:"Robert Walser" },
+  { text:"I am a kind of artisan of the small.", author:"Robert Walser" },
+  { text:"Slowness is reverence.", author:"Robert Walser" },
+  { text:"We construct a narrative for ourselves, and that's the thread that we follow from one day to the next.", author:"Paul Auster" },
+  { text:"You can't make art without resistance in the material.", author:"Paul Auster" },
+  { text:"Every life is inexplicable. I keep that in mind whenever I try to explain my own.", author:"Paul Auster" },
+  { text:"The world is a complicated machine, and each of us has a role to play in keeping it going.", author:"Paul Auster" },
+  { text:"The eye wants to fall in love with what it sees.", author:"Teju Cole" },
+  { text:"Photography is always already about time. It says: this was.", author:"Teju Cole" },
+  { text:"The best photographs are full of what they don't show.", author:"Teju Cole" },
+  { text:"To look is an act of choice.", author:"Teju Cole" },
+  { text:"Every photograph is a theory of light.", author:"Teju Cole" },
+  { text:"The camera relieves us of the burden of memory.", author:"John Berger" },
+  { text:"A photograph is a record of seeing, not of knowledge.", author:"John Berger" },
+  { text:"What makes photography a strange invention is that its primary raw materials are light and time.", author:"John Berger" },
+  { text:"Every image embodies a way of seeing.", author:"John Berger" },
+  { text:"Paintings are like music. Photographs are like memories.", author:"John Berger" },
+  { text:"To look is to cross that small distance between you and the thing you see.", author:"John Berger" },
+  { text:"The camera introduces us to unconscious optics as does psychoanalysis to unconscious impulses.", author:"Walter Benjamin" },
+  { text:"To dwell means to leave traces.", author:"Walter Benjamin" },
+  { text:"Not to find one's way in a city may well be uninteresting. But to lose oneself in a city as one loses oneself in a forest demands practice.", author:"Walter Benjamin" },
+  { text:"There is no document of civilization which is not at the same time a document of barbarism.", author:"Walter Benjamin" },
+  { text:"The art of storytelling is reaching its end because the epic side of truth — wisdom — is dying out.", author:"Walter Benjamin" },
+  { text:"Exhaust the habitual. Question the evident. Find what is so taken for granted that no one notices it anymore.", author:"Georges Perec" },
+  { text:"I would like there to exist places that are stable, unmoving, intangible, untouched and almost untouchable.", author:"Georges Perec" },
+  { text:"Make an inventory of everything you see.", author:"Georges Perec" },
+  { text:"The infra-ordinary: what happens when nothing happens.", author:"Georges Perec" },
 ];
 
-// ── MOOD BACKGROUND TINTS ─────────────────────────────────────────────────────
-// Extremely subtle — barely perceptible background shift.
+// ── Mood backgrounds ──────────────────────────────────────────────────────────
 const moodBg = {
   cold:    "#ECF0F2",
   warm:    "#F2EDE4",
   cool:    "#EBEDF0",
   neutral: "#F0EDE8",
 };
+// Ink color per mood (always dark enough for legibility)
+const moodInk = {
+  cold: "#1C2028", warm: "#1C1714", cool: "#1A1C22", neutral: "#1C1917",
+};
 
-// ────────────────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════
 // SEED SYSTEM
-// The seed is the Vienna date string (YYYY-MM-DD).
-// Before 06:00 Vienna time → use yesterday's date.
-// This makes each day's prompt identical for all users.
-// ────────────────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════
 
 function getViennaDateString() {
   const now = new Date();
-  const viennaStr = now.toLocaleString('en-CA', {
-    timeZone: 'Europe/Vienna',
-    hour12: false,
-    year: 'numeric', month: '2-digit', day: '2-digit',
-    hour: '2-digit', minute: '2-digit'
+  const s = now.toLocaleString('en-CA', {
+    timeZone:'Europe/Vienna', hour12:false,
+    year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit'
   });
-  const [datePart, timePart] = viennaStr.split(', ');
-  const [year, month, day] = datePart.split('-').map(Number);
-  const [hour] = timePart.split(':').map(Number);
-  // Before 06:00 → still showing yesterday's prompt
+  const [dp, tp] = s.split(', ');
+  const [year, month, day] = dp.split('-').map(Number);
+  const [hour] = tp.split(':').map(Number);
   if (hour < 6) {
-    const d = new Date(Date.UTC(year, month - 1, day - 1));
-    return d.toISOString().slice(0, 10);
+    const d = new Date(Date.UTC(year, month-1, day-1));
+    return d.toISOString().slice(0,10);
   }
   return `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
 }
 
-// Seeded RNG: djb2 hash → LCG sequence
-// Same seed always produces same sequence.
 function makeRng(seed) {
-  let hash = 5381;
-  for (let i = 0; i < seed.length; i++) {
-    hash = ((hash << 5) + hash) + seed.charCodeAt(i);
-    hash |= 0;
-  }
-  return function() {
-    hash = Math.imul(1664525, hash) + 1013904223 | 0;
-    return (hash >>> 0) / 0xFFFFFFFF;
-  };
+  let h = 5381;
+  for (let i = 0; i < seed.length; i++) { h = ((h << 5) + h) + seed.charCodeAt(i); h |= 0; }
+  return () => { h = Math.imul(1664525, h) + 1013904223 | 0; return (h >>> 0) / 0xFFFFFFFF; };
 }
 
-function seededPick(arr, rng) {
+// Salted pick — each category fully independent
+function saltedPick(arr, ds, salt) {
+  const rng = makeRng(ds + '|' + salt);
   return arr[Math.floor(rng() * arr.length)];
 }
 
-// ── GENERATE TODAY'S PROMPT ───────────────────────────────────────────────────
-function generateToday() {
-  const seed = getViennaDateString();
-  const rng  = makeRng(seed);
-
-  const subject     = seededPick(subjects, rng);
-  const lighting    = seededPick(lightings, rng);
-  const perspective = seededPick(perspectives, rng);
-  const composition = seededPick(compositions, rng);
-  const reflection  = seededPick(reflections, rng);
-  const quote       = seededPick(quotes, rng);
-
-  // Build sentence: alternate between using perspective or composition
-  // as the fourth line, based on seed to keep it varied day to day.
-  const useComposition = rng() > 0.45;
-  const fourthLine = useComposition ? composition : perspective;
-
-  return {
-    sentence: `Fotografiere heute\n${subject}\n${lighting.phrase}\n${fourthLine}.`,
-    reflection,
-    quote,
-    mood: lighting.mood,
-    seed,
-  };
+// Multiple salted floats for graphic generation
+function saltedFloats(ds, salt, count) {
+  const rng = makeRng(ds + '|' + salt);
+  return Array.from({length: count}, () => rng());
 }
 
-// ────────────────────────────────────────────────────────────────────────────
-// TIMER — seconds until next 06:00 Vienna
-// ────────────────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════
+// GRAPHIC SYSTEM
+// Determines graphic type from subject + lighting, then draws SVG elements.
+// All values derived from date seed → same day = same graphic.
+// ═══════════════════════════════════════════════════════════════════════════
 
+function getGraphicType(subject, lightingPhrase) {
+  const s = subject.toLowerCase();
+  const l = lightingPhrase.toLowerCase();
+  // Lighting-first overrides
+  if (l.includes('nacht') || l.includes('dämmerung') || l.includes('neon') || l.includes('scheinwerfer')) return 'night';
+  if (l.includes('halbdunkel') || l.includes('schatten') || l.includes('regen')) return 'shadow';
+  if (l.includes('gegenlicht')) return 'silhouette';
+  // Subject-based
+  if (s.includes('spiegelung'))                                                     return 'mirror';
+  if (s.includes('schatten'))                                                        return 'shadow';
+  if (s.includes('linie') || s.includes('weg') || s.includes('grenze') || s.includes('rand')) return 'perspective';
+  if (s.includes('muster') || s.includes('struktur') || s.includes('textur'))       return 'grid';
+  if (s.includes('lichtquelle'))                                                     return 'light';
+  if (s.includes('silhouette'))                                                      return 'silhouette';
+  if (s.includes('fenster') || s.includes('tür') || s.includes('zwischenraum'))     return 'frame';
+  if (s.includes('bewegung') || s.includes('geste') || s.includes('begegnung'))     return 'scatter';
+  if (s.includes('stille') || s.includes('leere') || s.includes('warten'))          return 'minimal';
+  if (l.includes('morgen') || l.includes('abend') || l.includes('kerzen'))          return 'warm_lines';
+  if (l.includes('diffus') || l.includes('weich') || l.includes('bewölkt'))         return 'soft_grid';
+  return 'minimal';
+}
+
+// SVG namespace helper
+const SVG_NS = 'http://www.w3.org/2000/svg';
+function el(tag, attrs) {
+  const e = document.createElementNS(SVG_NS, tag);
+  Object.entries(attrs).forEach(([k,v]) => e.setAttribute(k, v));
+  return e;
+}
+
+// W=390 H=844 — matches viewBox
+const W = 390, H = 844;
+
+function buildGraphic(type, seed, inkColor) {
+  const frag = document.createDocumentFragment();
+  const R = saltedFloats(seed, 'gfx', 60); // 60 random values for graphic use
+  let ri = 0; // index into R
+  const r = () => R[ri++ % R.length];
+
+  const s = (opacity) => String(opacity);
+
+  switch (type) {
+
+    case 'shadow': {
+      // Dense horizontal bands fading upward, a single light-source dot + shadow rays
+      const lightX = 60 + r() * 270;
+      const lightY = 40 + r() * 120;
+      // Shadow rays
+      [0.06, 0.045, 0.03].forEach((op, i) => {
+        const angle = 0.3 + r() * 0.4;
+        const len = 600 + r() * 200;
+        const x2 = lightX + Math.cos(Math.PI * (0.8 + angle)) * len;
+        const y2 = lightY + Math.sin(Math.PI * (0.8 + angle)) * len;
+        frag.appendChild(el('line', { x1:lightX, y1:lightY, x2, y2, stroke:inkColor, 'stroke-width':'0.5', opacity:s(op) }));
+      });
+      // Horizontal lines — dense bottom, fading up
+      const bandOpacities = [0.07, 0.06, 0.055, 0.05, 0.04, 0.035, 0.028, 0.022, 0.016, 0.01];
+      bandOpacities.forEach((op, i) => {
+        const y = H - 20 - i * (55 + r() * 20);
+        if (y > 0) frag.appendChild(el('line', { x1:0, y1:y, x2:W, y2:y, stroke:inkColor, 'stroke-width':'0.4', opacity:s(op) }));
+      });
+      // Light dot
+      frag.appendChild(el('circle', { cx:lightX, cy:lightY, r:'1.8', fill:inkColor, opacity:'0.2' }));
+      frag.appendChild(el('circle', { cx:lightX, cy:lightY, r:'7',   fill:'none', stroke:inkColor, 'stroke-width':'0.4', opacity:'0.07' }));
+      frag.appendChild(el('circle', { cx:lightX, cy:lightY, r:'18',  fill:'none', stroke:inkColor, 'stroke-width':'0.3', opacity:'0.035' }));
+      break;
+    }
+
+    case 'mirror': {
+      // Horizontal mirror axis, vertical lines above+below, ripple horizontals below, sun+reflection
+      const axisY = 360 + r() * 120;
+      frag.appendChild(el('line', { x1:0, y1:axisY, x2:W, y2:axisY, stroke:inkColor, 'stroke-width':'0.6', opacity:'0.1' }));
+      const sunX = 80 + r() * 230;
+      const sunY = 50 + r() * 80;
+      // Vertical lines above — converge toward axis
+      for (let i = 0; i < 8; i++) {
+        const x = 40 + i * 44;
+        const topY = sunY + r() * (axisY - sunY - 40);
+        frag.appendChild(el('line', { x1:x, y1:axisY, x2:x + (r()-0.5)*16, y2:topY, stroke:inkColor, 'stroke-width':'0.4', opacity:'0.05' }));
+        // Mirror below
+        const botY = axisY + (axisY - topY) * 0.75;
+        frag.appendChild(el('line', { x1:x, y1:axisY, x2:x + (r()-0.5)*12, y2:Math.min(botY, H-20), stroke:inkColor, 'stroke-width':'0.3', opacity:'0.03' }));
+      }
+      // Ripple horizontals below axis
+      for (let i = 1; i <= 5; i++) {
+        const y = axisY + i * (38 + r()*12);
+        if (y < H - 20) frag.appendChild(el('line', { x1:30, y1:y, x2:W-30, y2:y, stroke:inkColor, 'stroke-width':'0.3', opacity:s(0.032 - i*0.005) }));
+      }
+      // Sun dot
+      frag.appendChild(el('circle', { cx:sunX, cy:sunY, r:'2',  fill:inkColor, opacity:'0.18' }));
+      frag.appendChild(el('circle', { cx:sunX, cy:sunY, r:'9',  fill:'none', stroke:inkColor, 'stroke-width':'0.4', opacity:'0.06' }));
+      frag.appendChild(el('circle', { cx:sunX, cy:sunY, r:'20', fill:'none', stroke:inkColor, 'stroke-width':'0.25', opacity:'0.03' }));
+      // Reflection dot
+      const refY = axisY + (axisY - sunY) * 0.8;
+      if (refY < H - 10) {
+        frag.appendChild(el('circle', { cx:sunX, cy:refY, r:'1.5', fill:inkColor, opacity:'0.07' }));
+        frag.appendChild(el('circle', { cx:sunX, cy:refY, r:'7',   fill:'none', stroke:inkColor, 'stroke-width':'0.3', opacity:'0.025' }));
+      }
+      break;
+    }
+
+    case 'perspective': {
+      // Two lines converging to a vanishing point, cross-lines getting denser
+      const vpX = W * (0.35 + r() * 0.3);
+      const vpY = H * (0.25 + r() * 0.2);
+      frag.appendChild(el('line', { x1:0,   y1:H, x2:vpX, y2:vpY, stroke:inkColor, 'stroke-width':'0.6', opacity:'0.1' }));
+      frag.appendChild(el('line', { x1:W,   y1:H, x2:vpX, y2:vpY, stroke:inkColor, 'stroke-width':'0.6', opacity:'0.1' }));
+      // Cross-lines
+      const steps = [0.95, 0.88, 0.80, 0.71, 0.62, 0.52, 0.42];
+      steps.forEach((t, i) => {
+        const y = vpY + t * (H - vpY);
+        const lx = vpX - t * vpX;
+        const rx = vpX + t * (W - vpX);
+        const op = 0.065 - i * 0.007;
+        frag.appendChild(el('line', { x1:lx, y1:y, x2:rx, y2:y, stroke:inkColor, 'stroke-width':'0.35', opacity:s(Math.max(op,0.01)) }));
+      });
+      // VP dot
+      frag.appendChild(el('circle', { cx:vpX, cy:vpY, r:'1.2', fill:inkColor, opacity:'0.22' }));
+      frag.appendChild(el('circle', { cx:vpX, cy:vpY, r:'5',   fill:'none', stroke:inkColor, 'stroke-width':'0.3', opacity:'0.08' }));
+      break;
+    }
+
+    case 'grid': {
+      // Dot grid fading toward center
+      const cols = [24,60,96,132,168,204,240,276,312,348];
+      const rows = [60,120,180,600,660,720,780,830];
+      cols.forEach(cx => rows.forEach(cy => {
+        const dx = (cx - W/2) / (W/2);
+        const dy = (cy - H/2) / (H/2);
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        const op = Math.max(0.01, 0.22 * dist - 0.02);
+        frag.appendChild(el('circle', { cx, cy, r:'0.9', fill:inkColor, opacity:s(op) }));
+      }));
+      // Frame lines
+      frag.appendChild(el('rect', { x:20, y:20, width:W-40, height:H-40, fill:'none', stroke:inkColor, 'stroke-width':'0.5', opacity:'0.06', rx:'2' }));
+      frag.appendChild(el('rect', { x:32, y:32, width:W-64, height:H-64, fill:'none', stroke:inkColor, 'stroke-width':'0.3', opacity:'0.03', rx:'1' }));
+      break;
+    }
+
+    case 'night': {
+      // Scattered small dots like stars/lights, denser at edges
+      for (let i = 0; i < 40; i++) {
+        const x = r() * W;
+        const y = r() * H;
+        const dx = (x - W/2) / (W/2);
+        const dy = (y - H/2) / (H/2);
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        const op = 0.05 + dist * 0.18;
+        const rad = 0.6 + r() * 0.8;
+        frag.appendChild(el('circle', { cx:x, cy:y, r:String(rad), fill:inkColor, opacity:s(Math.min(op, 0.25)) }));
+      }
+      // A single brighter point
+      const bx = 60 + r() * 270, by = 60 + r() * 200;
+      frag.appendChild(el('circle', { cx:bx, cy:by, r:'2',  fill:inkColor, opacity:'0.28' }));
+      frag.appendChild(el('circle', { cx:bx, cy:by, r:'8',  fill:'none', stroke:inkColor, 'stroke-width':'0.35', opacity:'0.08' }));
+      frag.appendChild(el('circle', { cx:bx, cy:by, r:'20', fill:'none', stroke:inkColor, 'stroke-width':'0.2', opacity:'0.04' }));
+      break;
+    }
+
+    case 'silhouette': {
+      // Strong vertical line off-center, thin horizontal, diagonal accent
+      const vx = 80 + r() * 230;
+      frag.appendChild(el('line', { x1:vx, y1:0,   x2:vx, y2:H,   stroke:inkColor, 'stroke-width':'0.7', opacity:'0.1' }));
+      frag.appendChild(el('line', { x1:vx, y1:0,   x2:vx+6, y2:H, stroke:inkColor, 'stroke-width':'0.3', opacity:'0.04' }));
+      const hy = 200 + r() * 400;
+      frag.appendChild(el('line', { x1:0,  y1:hy,  x2:W,   y2:hy, stroke:inkColor, 'stroke-width':'0.4', opacity:'0.06' }));
+      // Light source behind (gegenlicht)
+      const lx = 20 + r() * (W-40), ly = 20 + r() * 120;
+      frag.appendChild(el('circle', { cx:lx, cy:ly, r:'3',  fill:inkColor, opacity:'0.14' }));
+      frag.appendChild(el('circle', { cx:lx, cy:ly, r:'14', fill:'none', stroke:inkColor, 'stroke-width':'0.35', opacity:'0.05' }));
+      frag.appendChild(el('circle', { cx:lx, cy:ly, r:'30', fill:'none', stroke:inkColor, 'stroke-width':'0.2', opacity:'0.025' }));
+      frag.appendChild(el('circle', { cx:lx, cy:ly, r:'60', fill:'none', stroke:inkColor, 'stroke-width':'0.15', opacity:'0.015' }));
+      break;
+    }
+
+    case 'frame': {
+      // Nested rectangles, slightly offset — window/door frame feel
+      const pad = [20, 36, 52, 72];
+      const opacities = [0.07, 0.05, 0.035, 0.02];
+      pad.forEach((p, i) => {
+        const shift = (r() - 0.5) * 6;
+        frag.appendChild(el('rect', {
+          x: p + shift, y: p,
+          width: W - p*2 - Math.abs(shift),
+          height: H - p*2,
+          fill:'none', stroke:inkColor,
+          'stroke-width': String(0.5 - i*0.07),
+          opacity: s(opacities[i]),
+          rx:'1'
+        }));
+      });
+      // Single vertical center line
+      frag.appendChild(el('line', { x1:W/2, y1:0, x2:W/2, y2:H, stroke:inkColor, 'stroke-width':'0.3', opacity:'0.04' }));
+      break;
+    }
+
+    case 'scatter': {
+      // Random short lines — movement, gesture feel
+      for (let i = 0; i < 18; i++) {
+        const x = r() * W;
+        const y = r() * H;
+        const len = 12 + r() * 40;
+        const angle = r() * Math.PI * 2;
+        const x2 = x + Math.cos(angle) * len;
+        const y2 = y + Math.sin(angle) * len;
+        const op = 0.03 + r() * 0.06;
+        frag.appendChild(el('line', { x1:x, y1:y, x2, y2, stroke:inkColor, 'stroke-width':'0.4', opacity:s(op) }));
+      }
+      // A few dots
+      for (let i = 0; i < 6; i++) {
+        frag.appendChild(el('circle', { cx:r()*W, cy:r()*H, r:String(0.7 + r()*0.8), fill:inkColor, opacity:s(0.08 + r()*0.08) }));
+      }
+      break;
+    }
+
+    case 'light': {
+      // Radiating lines from a point, like a bare bulb
+      const lx = 80 + r() * 230, ly = 60 + r() * 160;
+      const rayCount = 12;
+      for (let i = 0; i < rayCount; i++) {
+        const angle = (i / rayCount) * Math.PI * 2;
+        const len = 120 + r() * 300;
+        frag.appendChild(el('line', {
+          x1:lx, y1:ly,
+          x2: lx + Math.cos(angle) * len,
+          y2: ly + Math.sin(angle) * len,
+          stroke:inkColor, 'stroke-width':'0.35', opacity:'0.04'
+        }));
+      }
+      frag.appendChild(el('circle', { cx:lx, cy:ly, r:'2',  fill:inkColor, opacity:'0.22' }));
+      frag.appendChild(el('circle', { cx:lx, cy:ly, r:'10', fill:'none', stroke:inkColor, 'stroke-width':'0.4', opacity:'0.07' }));
+      frag.appendChild(el('circle', { cx:lx, cy:ly, r:'24', fill:'none', stroke:inkColor, 'stroke-width':'0.25', opacity:'0.04' }));
+      frag.appendChild(el('circle', { cx:lx, cy:ly, r:'50', fill:'none', stroke:inkColor, 'stroke-width':'0.15', opacity:'0.02' }));
+      break;
+    }
+
+    case 'warm_lines': {
+      // Gentle diagonal lines — like warm light through blinds
+      const angle = 0.18 + r() * 0.12;
+      const gap = 48 + r() * 28;
+      for (let i = 0; i < 14; i++) {
+        const offset = i * gap - 200;
+        const op = 0.02 + (i % 3 === 0 ? 0.025 : 0);
+        frag.appendChild(el('line', {
+          x1: offset, y1: 0,
+          x2: offset + H * Math.tan(angle), y2: H,
+          stroke:inkColor, 'stroke-width':'0.5', opacity:s(op)
+        }));
+      }
+      // Small warm dot
+      const dx = 60 + r() * 270, dy = 60 + r() * 160;
+      frag.appendChild(el('circle', { cx:dx, cy:dy, r:'1.5', fill:inkColor, opacity:'0.16' }));
+      frag.appendChild(el('circle', { cx:dx, cy:dy, r:'7',   fill:'none', stroke:inkColor, 'stroke-width':'0.3', opacity:'0.05' }));
+      break;
+    }
+
+    case 'soft_grid': {
+      // Very faint regular grid — calm, diffuse feel
+      const gapX = 44, gapY = 44;
+      for (let x = gapX; x < W; x += gapX) {
+        frag.appendChild(el('line', { x1:x, y1:0, x2:x, y2:H, stroke:inkColor, 'stroke-width':'0.3', opacity:'0.03' }));
+      }
+      for (let y = gapY; y < H; y += gapY) {
+        frag.appendChild(el('line', { x1:0, y1:y, x2:W, y2:y, stroke:inkColor, 'stroke-width':'0.3', opacity:'0.025' }));
+      }
+      break;
+    }
+
+    case 'minimal':
+    default: {
+      // Almost nothing — just a single thin horizontal line and one dot
+      const y = H * (0.55 + r() * 0.2);
+      frag.appendChild(el('line', { x1:40, y1:y, x2:W-40, y2:y, stroke:inkColor, 'stroke-width':'0.4', opacity:'0.06' }));
+      const dx = 60 + r() * 270, dy = 60 + r() * 160;
+      frag.appendChild(el('circle', { cx:dx, cy:dy, r:'1.2', fill:inkColor, opacity:'0.12' }));
+      break;
+    }
+  }
+  return frag;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// GENERATE
+// ═══════════════════════════════════════════════════════════════════════════
+
+function generateToday() {
+  const seed    = getViennaDateString();
+  const subject = saltedPick(subjects,     seed, 'subject');
+  const lighting= saltedPick(lightings,    seed, 'lighting');
+  const persp   = saltedPick(perspectives, seed, 'perspective');
+  const comp    = saltedPick(compositions, seed, 'composition');
+  const refl    = saltedPick(reflections,  seed, 'reflection');
+  const quote   = saltedPick(quotes,       seed, 'quote');
+  const tmpl    = saltedPick(templates,    seed, 'template');
+  const gtype   = getGraphicType(subject, lighting.phrase);
+  return { sentence: tmpl(subject, lighting.phrase, persp, comp), refl, quote, mood: lighting.mood, seed, gtype };
+}
+
+// ── Timer ─────────────────────────────────────────────────────────────────────
 function getSecondsUntilNext6() {
   const now = new Date();
-  const viennaStr = now.toLocaleString('en-CA', {
-    timeZone: 'Europe/Vienna',
-    hour12: false,
-    year: 'numeric', month: '2-digit', day: '2-digit',
-    hour: '2-digit', minute: '2-digit', second: '2-digit'
+  const s = now.toLocaleString('en-CA', {
+    timeZone:'Europe/Vienna', hour12:false,
+    year:'numeric', month:'2-digit', day:'2-digit',
+    hour:'2-digit', minute:'2-digit', second:'2-digit'
   });
-  const [datePart, timePart] = viennaStr.split(', ');
-  const [year, month, day]   = datePart.split('-').map(Number);
-  const [hour, minute, sec]  = timePart.split(':').map(Number);
-
-  const decimal = hour + minute / 60 + sec / 3600;
-
-  // Target: next 06:00 — today if before 06:00, otherwise tomorrow
-  let tYear = year, tMonth = month, tDay = day;
-  if (decimal >= 6) {
-    const t = new Date(Date.UTC(year, month - 1, day + 1));
-    tYear  = t.getUTCFullYear();
-    tMonth = t.getUTCMonth() + 1;
-    tDay   = t.getUTCDate();
+  const [dp,tp] = s.split(', ');
+  const [year,month,day] = dp.split('-').map(Number);
+  const [hour,min,sec]   = tp.split(':').map(Number);
+  const dec = hour + min/60 + sec/3600;
+  let tY=year, tM=month, tD=day;
+  if (dec >= 6) {
+    const t = new Date(Date.UTC(year,month-1,day+1));
+    tY=t.getUTCFullYear(); tM=t.getUTCMonth()+1; tD=t.getUTCDate();
   }
-
-  // Find Vienna UTC offset at target date (around 05:00 UTC to avoid edge cases)
-  const sample       = new Date(Date.UTC(tYear, tMonth - 1, tDay, 5, 0, 0));
-  const sampleVienna = new Date(sample.toLocaleString('en-US', { timeZone: 'Europe/Vienna' }));
-  const offsetHours  = -(sample - sampleVienna) / 3_600_000; // e.g. 2 in CEST
-  const utcHour      = 6 - offsetHours;                      // e.g. 4 in CEST
-
-  const next6 = new Date(Date.UTC(tYear, tMonth - 1, tDay, utcHour, 0, 0));
-  return Math.max(0, Math.floor((next6 - now) / 1000));
+  const sample  = new Date(Date.UTC(tY,tM-1,tD,5,0,0));
+  const sVienna = new Date(sample.toLocaleString('en-US',{timeZone:'Europe/Vienna'}));
+  const off     = -(sample-sVienna)/3_600_000;
+  const next6   = new Date(Date.UTC(tY,tM-1,tD,6-off,0,0));
+  return Math.max(0, Math.floor((next6-now)/1000));
 }
 
-function formatTimer(totalSeconds) {
-  const h = Math.floor(totalSeconds / 3600);
-  const m = Math.floor((totalSeconds % 3600) / 60);
-  const s = totalSeconds % 60;
+function formatTimer(t) {
+  const h=Math.floor(t/3600), m=Math.floor((t%3600)/60), s=t%60;
   return `${h}h ${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}s`;
 }
 
-function formatDateLabel(seedStr) {
-  // seedStr: "2026-05-25" → "25. Mai 2026"
-  const [y, mo, d] = seedStr.split('-').map(Number);
-  const months = ["Januar","Februar","März","April","Mai","Juni",
-                  "Juli","August","September","Oktober","November","Dezember"];
-  return `${d}. ${months[mo - 1]} ${y}`;
+function formatDateLabel(seed) {
+  const [y,mo,d] = seed.split('-').map(Number);
+  const months=["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+  return `${d}. ${months[mo-1]} ${y}`;
 }
 
-// ────────────────────────────────────────────────────────────────────────────
-// DOM
-// ────────────────────────────────────────────────────────────────────────────
+// ── DOM ───────────────────────────────────────────────────────────────────────
+const $prompt    = document.getElementById('prompt');
+const $refl      = document.getElementById('reflection');
+const $qText     = document.getElementById('quote-text');
+const $qAuth     = document.getElementById('quote-author');
+const $timer     = document.getElementById('timer');
+const $dateLbl   = document.getElementById('date-label');
+const $wrap      = document.getElementById('prompt-wrap');
+const $bgLayer   = document.getElementById('bg-layer');
 
-const $prompt     = document.getElementById('prompt');
-const $reflection = document.getElementById('reflection');
-const $quoteText  = document.getElementById('quote-text');
-const $quoteAuth  = document.getElementById('quote-author');
-const $timer      = document.getElementById('timer');
-const $dateLabel  = document.getElementById('date-label');
-const $wrap       = document.getElementById('prompt-wrap');
+function nl2br(str) { return str.split('\n').join('<br>'); }
 
-function nl2br(str) {
-  return str.split('\n').join('<br>');
+function applyMoodColors(mood) {
+  const bg  = moodBg[mood]  || moodBg.neutral;
+  const ink = moodInk[mood] || moodInk.neutral;
+  document.body.style.background = bg;
+  document.documentElement.style.background = bg;
+  // Update CSS variables for text color consistency
+  document.documentElement.style.setProperty('--ink',   ink);
+  document.documentElement.style.setProperty('--muted', ink.replace('1C','6B').replace('17','65').replace('28','28'));
 }
 
 function render(data) {
-  $prompt.innerHTML     = nl2br(data.sentence);
-  $reflection.innerHTML = nl2br(data.reflection);
-  $quoteText.innerHTML  = nl2br(data.quote.text);
-  $quoteAuth.textContent = data.quote.author;
-  $dateLabel.textContent = formatDateLabel(data.seed);
+  $prompt.innerHTML = nl2br(data.sentence);
+  $refl.innerHTML   = nl2br(data.refl);
+  $qText.innerHTML  = nl2br(data.quote.text);
+  $qAuth.textContent = data.quote.author;
+  $dateLbl.textContent = formatDateLabel(data.seed);
+  applyMoodColors(data.mood);
 
-  // Mood tint
-  const bg = moodBg[data.mood] || moodBg.neutral;
-  document.body.style.background = bg;
-  document.documentElement.style.background = bg;
+  // Rebuild SVG graphic
+  const ink = moodInk[data.mood] || moodInk.neutral;
+  while ($bgLayer.firstChild) $bgLayer.removeChild($bgLayer.firstChild);
+  $bgLayer.appendChild(buildGraphic(data.gtype, data.seed, ink));
 }
 
-// ── TIMER LOOP ────────────────────────────────────────────────────────────────
+// ── Tick ──────────────────────────────────────────────────────────────────────
 let lastSeed = null;
 
 function tick() {
-  const secs = getSecondsUntilNext6();
-  $timer.textContent = formatTimer(secs);
-
-  // If the seed changed (new day crossed 06:00) → refresh prompt
+  $timer.textContent = formatTimer(getSecondsUntilNext6());
   const newSeed = getViennaDateString();
   if (newSeed !== lastSeed) {
-    lastSeed = newSeed;
     const data = generateToday();
-
     if (lastSeed !== null) {
-      // Animate transition for day rollover
       $wrap.classList.add('out');
-      setTimeout(() => {
-        render(data);
-        $wrap.classList.remove('out');
-      }, 550);
+      setTimeout(() => { render(data); $wrap.classList.remove('out'); }, 550);
     } else {
       render(data);
     }
+    lastSeed = newSeed;
   }
 }
 
-// ── INIT ──────────────────────────────────────────────────────────────────────
 tick();
 setInterval(tick, 1000);
 </script>

@@ -8,20 +8,26 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
   <meta name="apple-mobile-web-app-title" content="DAILY"/>
   <meta name="theme-color" content="#0D0D0D"/>
+  <!-- Keine externen Ressourcen — ausschließlich System-Fonts -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230D0D0D'/><text y='67' x='50' text-anchor='middle' font-family='Georgia,serif' font-size='28' letter-spacing='6' fill='%23EDE0CC'>DAILY</text></svg>"/>
   <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1024 1024'><rect width='1024' height='1024' rx='220' fill='%230D0D0D'/><text y='620' x='512' text-anchor='middle' font-family='Georgia,serif' font-size='280' letter-spacing='60' fill='%23EDE0CC'>DAILY</text></svg>"/>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     :root {
+      /* System serif — Palatino first (elegant, closest to Cormorant feel),
+         Georgia as reliable fallback */
+      --font-serif: "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+      /* System sans — native UI font first */
+      --font-sans:  -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+
       --bg:     #F0EDE8;
       --ink:    #1C1917;
       --muted:  #6B6560;
       --faint:  #AAA49D;
       --accent: #8B5E3C;
     }
+
     html, body {
       height: 100%;
       background: var(--bg);
@@ -30,16 +36,18 @@
       -moz-osx-font-smoothing: grayscale;
       transition: background 0.9s ease, color 0.9s ease;
     }
-    body { font-family: 'Inter', -apple-system, sans-serif; font-weight: 300; }
+    body {
+      font-family: var(--font-sans);
+      font-weight: 300;
+    }
 
-    /* ── SVG background — full bleed, behind everything ── */
+    /* ── SVG background — full bleed ── */
     #bg-svg {
       position: fixed;
       inset: 0;
       width: 100%; height: 100%;
       pointer-events: none;
       z-index: 0;
-      transition: opacity 0.9s ease;
     }
 
     /* ── Shell ── */
@@ -50,7 +58,7 @@
       min-height: 100dvh;
       display: flex;
       flex-direction: column;
-      padding: 36px 52px 36px;
+      padding: 36px 52px 28px;
       max-width: 820px;
     }
 
@@ -62,6 +70,7 @@
       flex-shrink: 0;
     }
     #logo {
+      font-family: var(--font-sans);
       font-size: 10px;
       font-weight: 400;
       letter-spacing: 0.24em;
@@ -69,6 +78,7 @@
       text-transform: uppercase;
     }
     #timer {
+      font-family: var(--font-sans);
       font-size: 10px;
       font-weight: 300;
       letter-spacing: 0.08em;
@@ -86,6 +96,8 @@
       justify-content: center;
       padding: 52px 0 16px;
     }
+
+    /* Fade/slide transition */
     #prompt-wrap {
       opacity: 1;
       transform: translateY(0);
@@ -93,33 +105,39 @@
     }
     #prompt-wrap.out { opacity: 0; transform: translateY(14px); }
 
+    /* ── Prompt — main serif headline ── */
     #prompt {
-      font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: clamp(36px, 5.8vw, 70px);
-      font-weight: 500;
-      line-height: 1.1;
+      font-family: var(--font-serif);
+      font-size: clamp(34px, 5.6vw, 68px);
+      font-weight: normal;
+      line-height: 1.12;
       letter-spacing: -0.01em;
       color: var(--ink);
       margin-bottom: 36px;
     }
+
     .rule {
       width: 30px; height: 1.5px;
       background: var(--muted);
       opacity: 0.4;
       margin-bottom: 26px;
     }
+
+    /* ── Reflection ── */
     #reflection {
-      font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: clamp(15px, 1.9vw, 20px);
-      font-weight: 400;
+      font-family: var(--font-serif);
+      font-size: clamp(15px, 1.9vw, 19px);
+      font-weight: normal;
       line-height: 1.55;
       color: var(--muted);
       max-width: 400px;
       margin-bottom: 52px;
     }
+
+    /* ── Quote ── */
     #quote-block { max-width: 420px; }
     #quote-mark {
-      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-family: var(--font-serif);
       font-size: 26px;
       color: var(--accent);
       line-height: 1;
@@ -127,15 +145,15 @@
       opacity: 0.8;
     }
     #quote-text {
-      font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: clamp(14px, 1.75vw, 18px);
-      font-weight: 400;
+      font-family: var(--font-serif);
+      font-size: clamp(13px, 1.7vw, 17px);
       font-style: italic;
       line-height: 1.65;
       color: var(--muted);
       margin-bottom: 14px;
     }
     #quote-author {
+      font-family: var(--font-sans);
       font-size: 9px;
       font-weight: 400;
       letter-spacing: 0.2em;
@@ -147,33 +165,136 @@
     /* ── Footer ── */
     #footer {
       flex-shrink: 0;
-      padding-top: 32px;
+      padding-top: 28px;
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
     }
     #date-label {
+      font-family: var(--font-sans);
       font-size: 9px;
       font-weight: 300;
       letter-spacing: 0.14em;
       color: var(--faint);
       opacity: 0.6;
     }
-    #dot {
-      width: 4px; height: 4px;
-      border-radius: 50%;
-      background: var(--ink);
-      opacity: 0.15;
+    /* Impressum link — dezent, kein Button-Look */
+    #impressum-link {
+      font-family: var(--font-sans);
+      font-size: 9px;
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      color: var(--faint);
+      opacity: 0.5;
+      cursor: pointer;
+      text-decoration: none;
+      background: none;
+      border: none;
+      padding: 0;
+      transition: opacity 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #impressum-link:hover { opacity: 0.9; }
+
+    /* ── Impressum overlay ── */
+    #impressum-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: var(--bg);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    #impressum-overlay.visible { display: block; }
+
+    #impressum-inner {
+      max-width: 820px;
+      padding: 36px 52px 60px;
+      min-height: 100vh;
     }
 
+    #impressum-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 64px;
+    }
+    #impressum-logo {
+      font-family: var(--font-sans);
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.24em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    #impressum-close {
+      background: none;
+      border: none;
+      font-family: var(--font-sans);
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      color: var(--faint);
+      cursor: pointer;
+      text-transform: uppercase;
+      padding: 0;
+      opacity: 0.6;
+      transition: opacity 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #impressum-close:hover { opacity: 1; }
+
+    .imp-section {
+      margin-bottom: 48px;
+    }
+    .imp-label {
+      font-family: var(--font-sans);
+      font-size: 8px;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      color: var(--faint);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .imp-body {
+      font-family: var(--font-serif);
+      font-size: clamp(15px, 1.8vw, 18px);
+      font-weight: normal;
+      line-height: 1.6;
+      color: var(--ink);
+    }
+    .imp-body a {
+      color: var(--muted);
+      text-decoration: none;
+      border-bottom: 1px solid var(--sep, #D0CBC3);
+    }
+    .imp-body a:hover { color: var(--ink); }
+    .imp-rule {
+      width: 100%; height: 1px;
+      background: var(--faint);
+      opacity: 0.2;
+      margin-bottom: 48px;
+    }
+    .imp-small {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 300;
+      line-height: 1.65;
+      color: var(--muted);
+    }
+
+    /* ── Responsive ── */
     @media (max-width: 600px) {
-      #shell   { padding: 28px 30px 28px; }
-      #content { padding: 44px 0 12px; }
-      #prompt  { margin-bottom: 28px; }
-      #reflection { margin-bottom: 40px; }
+      #shell          { padding: 28px 30px 22px; }
+      #content        { padding: 44px 0 12px; }
+      #prompt         { margin-bottom: 28px; }
+      #reflection     { margin-bottom: 40px; }
+      #impressum-inner{ padding: 28px 30px 48px; }
+      #impressum-header { margin-bottom: 48px; }
     }
     @media (max-width: 380px) {
-      #shell { padding: 24px 22px 22px; }
+      #shell          { padding: 24px 22px 20px; }
+      #impressum-inner{ padding: 24px 22px 40px; }
     }
   </style>
 </head>
@@ -184,11 +305,13 @@
   <g id="bg-layer"></g>
 </svg>
 
+<!-- ── Main screen ── -->
 <div id="shell">
   <div id="header">
     <span id="logo">Daily</span>
     <span id="timer">—</span>
   </div>
+
   <div id="content">
     <div id="prompt-wrap">
       <p id="prompt"></p>
@@ -201,17 +324,138 @@
       </div>
     </div>
   </div>
+
   <div id="footer">
     <span id="date-label"></span>
-    <div id="dot"></div>
+    <button id="impressum-link" aria-label="Impressum und Datenschutz">§</button>
   </div>
 </div>
 
+<!-- ── Impressum / Datenschutz overlay ── -->
+<div id="impressum-overlay" role="dialog" aria-modal="true" aria-label="Impressum und Datenschutz">
+  <div id="impressum-inner">
+
+    <div id="impressum-header">
+      <span id="impressum-logo">Daily — §</span>
+      <button id="impressum-close" aria-label="Schließen">Schließen</button>
+    </div>
+
+    <div class="imp-section">
+      <div class="imp-label">Impressum</div>
+      <div class="imp-body">
+        Clemens Schleinzer<br>
+        Enzersdorfer Straße 9/2/2<br>
+        2401 Fischamend<br>
+        Österreich<br><br>
+        <a href="mailto:schleinzer@gmail.com">schleinzer@gmail.com</a>
+      </div>
+    </div>
+
+    <div class="imp-rule"></div>
+
+    <div class="imp-section">
+      <div class="imp-label">Zweck</div>
+      <div class="imp-body">
+        Daily ist ein täglicher Fotografie-Impuls.
+        Die App generiert jeden Morgen um 06:00 Uhr
+        einen fotografischen Gedanken — als stille
+        Einladung, die Welt aufmerksamer zu betrachten.
+      </div>
+    </div>
+
+    <div class="imp-rule"></div>
+
+    <div class="imp-section">
+      <div class="imp-label">Datenschutz</div>
+      <div class="imp-small">
+        <p style="margin-bottom:12px;">
+          Diese Website erhebt, speichert und verarbeitet
+          keinerlei personenbezogene Daten.
+        </p>
+        <p style="margin-bottom:12px;">
+          Es werden keine Cookies gesetzt. Es findet kein
+          Tracking statt. Es werden keine Analyse- oder
+          Werbedienste eingebunden.
+        </p>
+        <p style="margin-bottom:12px;">
+          Die App läuft vollständig im Browser des
+          Besuchers (Client-Side). Es werden keine Daten
+          an den Betreiber oder Dritte übertragen.
+        </p>
+        <p>
+          Die App verwendet ausschließlich System-Schriften
+          des jeweiligen Betriebssystems. Es werden keine
+          externen Schriften, Skripte oder Ressourcen
+          von Drittanbietern geladen.
+        </p>
+      </div>
+    </div>
+
+    <div class="imp-rule"></div>
+
+    <div class="imp-section">
+      <div class="imp-label">Hosting</div>
+      <div class="imp-small">
+        Diese Website wird über
+        <strong>GitHub Pages</strong>
+        (GitHub, Inc., 88 Colin P Kelly Jr St,
+        San Francisco, CA 94107, USA) gehostet.
+        Beim Abruf der Seite kann GitHub technische
+        Zugriffsdaten (IP-Adresse, Zeitstempel) in
+        Server-Logs speichern. Diese Daten werden vom
+        Betreiber nicht eingesehen oder ausgewertet.
+        Weitere Informationen finden sich in der
+        <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">Datenschutzerklärung von GitHub</a>.
+      </div>
+    </div>
+
+    <div class="imp-rule"></div>
+
+    <div class="imp-section">
+      <div class="imp-label">Externe Dienste</div>
+      <div class="imp-small">
+        Diese Website lädt keine externen Dienste,
+        Schriften, Tracking-Pixel, Analyse-Tools
+        oder sonstige Drittanbieter-Ressourcen.
+        Alle Inhalte werden lokal im Browser erzeugt.
+      </div>
+    </div>
+
+    <div class="imp-rule"></div>
+
+    <div class="imp-section">
+      <div class="imp-label">Rechtliche Hinweise</div>
+      <div class="imp-small">
+        <p style="margin-bottom:12px;">
+          Trotz sorgfältiger inhaltlicher Kontrolle wird
+          keine Haftung für die Inhalte externer Links
+          übernommen. Für den Inhalt der verlinkten
+          Seiten sind ausschließlich deren Betreiber
+          verantwortlich.
+        </p>
+        <p>
+          Alle auf dieser Website verwendeten Zitate
+          sind realen Personen zugeschrieben und werden
+          ausschließlich zu kulturellen und
+          inspiratorischen Zwecken genutzt.
+          Bei Fragen zur Quellenangabe wenden Sie sich
+          bitte an den Betreiber.
+        </p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+  GENERATOR — alle Daten lokal, keine externen APIs
+════════════════════════════════════════════════════════════════════════════ -->
 <script>
 'use strict';
 
 // ═══════════════════════════════════════════════════════════════════════════
-// DATA — add new entries to any array to extend the app
+// DATA
+// Neue Einträge können in beliebigen Arrays ergänzt werden.
 // ═══════════════════════════════════════════════════════════════════════════
 
 const subjects = [
@@ -352,7 +596,7 @@ const quotes = [
   { text:"A photo is a moment lived twice — once in reality, once in memory.", author:"Fan Ho" },
   { text:"Light is the language I speak.", author:"Fan Ho" },
   { text:"I search for simplicity in the city. It is always there, waiting.", author:"Fan Ho" },
-  // Schriftsteller / Filmemacher
+  // Schriftsteller / Filmemacher / Denker
   { text:"I live my life in widening circles that reach out across the world.", author:"Rainer Maria Rilke" },
   { text:"Perhaps all the dragons in our lives are princesses who are only waiting to see us act with beauty and courage.", author:"Rainer Maria Rilke" },
   { text:"The only journey is the one within.", author:"Rainer Maria Rilke" },
@@ -474,17 +718,9 @@ const quotes = [
   { text:"The infra-ordinary: what happens when nothing happens.", author:"Georges Perec" },
 ];
 
-// ── Mood backgrounds ──────────────────────────────────────────────────────────
-const moodBg = {
-  cold:    "#ECF0F2",
-  warm:    "#F2EDE4",
-  cool:    "#EBEDF0",
-  neutral: "#F0EDE8",
-};
-// Ink color per mood (always dark enough for legibility)
-const moodInk = {
-  cold: "#1C2028", warm: "#1C1714", cool: "#1A1C22", neutral: "#1C1917",
-};
+// ── Mood backgrounds & ink ────────────────────────────────────────────────────
+const moodBg  = { cold:"#ECF0F2", warm:"#F2EDE4", cool:"#EBEDF0", neutral:"#F0EDE8" };
+const moodInk = { cold:"#1C2028", warm:"#1C1714", cool:"#1A1C22", neutral:"#1C1917" };
 
 // ═══════════════════════════════════════════════════════════════════════════
 // SEED SYSTEM
@@ -512,13 +748,11 @@ function makeRng(seed) {
   return () => { h = Math.imul(1664525, h) + 1013904223 | 0; return (h >>> 0) / 0xFFFFFFFF; };
 }
 
-// Salted pick — each category fully independent
 function saltedPick(arr, ds, salt) {
   const rng = makeRng(ds + '|' + salt);
   return arr[Math.floor(rng() * arr.length)];
 }
 
-// Multiple salted floats for graphic generation
 function saltedFloats(ds, salt, count) {
   const rng = makeRng(ds + '|' + salt);
   return Array.from({length: count}, () => rng());
@@ -526,285 +760,183 @@ function saltedFloats(ds, salt, count) {
 
 // ═══════════════════════════════════════════════════════════════════════════
 // GRAPHIC SYSTEM
-// Determines graphic type from subject + lighting, then draws SVG elements.
-// All values derived from date seed → same day = same graphic.
 // ═══════════════════════════════════════════════════════════════════════════
 
 function getGraphicType(subject, lightingPhrase) {
-  const s = subject.toLowerCase();
-  const l = lightingPhrase.toLowerCase();
-  // Lighting-first overrides
-  if (l.includes('nacht') || l.includes('dämmerung') || l.includes('neon') || l.includes('scheinwerfer')) return 'night';
-  if (l.includes('halbdunkel') || l.includes('schatten') || l.includes('regen')) return 'shadow';
+  const s = subject.toLowerCase(), l = lightingPhrase.toLowerCase();
+  if (l.includes('nacht')||l.includes('dämmerung')||l.includes('neon')||l.includes('scheinwerfer')) return 'night';
+  if (l.includes('halbdunkel')||l.includes('schatten')||l.includes('regen')) return 'shadow';
   if (l.includes('gegenlicht')) return 'silhouette';
-  // Subject-based
-  if (s.includes('spiegelung'))                                                     return 'mirror';
-  if (s.includes('schatten'))                                                        return 'shadow';
-  if (s.includes('linie') || s.includes('weg') || s.includes('grenze') || s.includes('rand')) return 'perspective';
-  if (s.includes('muster') || s.includes('struktur') || s.includes('textur'))       return 'grid';
-  if (s.includes('lichtquelle'))                                                     return 'light';
-  if (s.includes('silhouette'))                                                      return 'silhouette';
-  if (s.includes('fenster') || s.includes('tür') || s.includes('zwischenraum'))     return 'frame';
-  if (s.includes('bewegung') || s.includes('geste') || s.includes('begegnung'))     return 'scatter';
-  if (s.includes('stille') || s.includes('leere') || s.includes('warten'))          return 'minimal';
-  if (l.includes('morgen') || l.includes('abend') || l.includes('kerzen'))          return 'warm_lines';
-  if (l.includes('diffus') || l.includes('weich') || l.includes('bewölkt'))         return 'soft_grid';
+  if (s.includes('spiegelung'))  return 'mirror';
+  if (s.includes('schatten'))    return 'shadow';
+  if (s.includes('linie')||s.includes('weg')||s.includes('grenze')||s.includes('rand')) return 'perspective';
+  if (s.includes('muster')||s.includes('struktur')||s.includes('textur')) return 'grid';
+  if (s.includes('lichtquelle')) return 'light';
+  if (s.includes('silhouette'))  return 'silhouette';
+  if (s.includes('fenster')||s.includes('tür')||s.includes('zwischenraum')) return 'frame';
+  if (s.includes('bewegung')||s.includes('geste')||s.includes('begegnung')) return 'scatter';
+  if (s.includes('stille')||s.includes('leere')||s.includes('warten')) return 'minimal';
+  if (l.includes('morgen')||l.includes('abend')||l.includes('kerzen')) return 'warm_lines';
+  if (l.includes('diffus')||l.includes('weich')||l.includes('bewölkt')) return 'soft_grid';
   return 'minimal';
 }
 
-// SVG namespace helper
 const SVG_NS = 'http://www.w3.org/2000/svg';
 function el(tag, attrs) {
   const e = document.createElementNS(SVG_NS, tag);
   Object.entries(attrs).forEach(([k,v]) => e.setAttribute(k, v));
   return e;
 }
-
-// W=390 H=844 — matches viewBox
 const W = 390, H = 844;
 
 function buildGraphic(type, seed, inkColor) {
   const frag = document.createDocumentFragment();
-  const R = saltedFloats(seed, 'gfx', 60); // 60 random values for graphic use
-  let ri = 0; // index into R
+  const R = saltedFloats(seed, 'gfx', 60);
+  let ri = 0;
   const r = () => R[ri++ % R.length];
-
-  const s = (opacity) => String(opacity);
+  const s = (o) => String(o);
 
   switch (type) {
-
     case 'shadow': {
-      // Dense horizontal bands fading upward, a single light-source dot + shadow rays
-      const lightX = 60 + r() * 270;
-      const lightY = 40 + r() * 120;
-      // Shadow rays
-      [0.06, 0.045, 0.03].forEach((op, i) => {
-        const angle = 0.3 + r() * 0.4;
-        const len = 600 + r() * 200;
-        const x2 = lightX + Math.cos(Math.PI * (0.8 + angle)) * len;
-        const y2 = lightY + Math.sin(Math.PI * (0.8 + angle)) * len;
-        frag.appendChild(el('line', { x1:lightX, y1:lightY, x2, y2, stroke:inkColor, 'stroke-width':'0.5', opacity:s(op) }));
+      const lx = 60 + r()*270, ly = 40 + r()*120;
+      [0.06,0.045,0.03].forEach(() => {
+        const angle = 0.3 + r()*0.4, len = 600 + r()*200;
+        const x2 = lx + Math.cos(Math.PI*(0.8+angle))*len;
+        const y2 = ly + Math.sin(Math.PI*(0.8+angle))*len;
+        frag.appendChild(el('line',{x1:lx,y1:ly,x2,y2,stroke:inkColor,'stroke-width':'0.5',opacity:s(0.06-r()*0.02)}));
       });
-      // Horizontal lines — dense bottom, fading up
-      const bandOpacities = [0.07, 0.06, 0.055, 0.05, 0.04, 0.035, 0.028, 0.022, 0.016, 0.01];
-      bandOpacities.forEach((op, i) => {
-        const y = H - 20 - i * (55 + r() * 20);
-        if (y > 0) frag.appendChild(el('line', { x1:0, y1:y, x2:W, y2:y, stroke:inkColor, 'stroke-width':'0.4', opacity:s(op) }));
+      [0.07,0.06,0.055,0.05,0.04,0.035,0.028,0.022,0.016,0.01].forEach((op,i) => {
+        const y = H-20-i*(55+r()*20);
+        if(y>0) frag.appendChild(el('line',{x1:0,y1:y,x2:W,y2:y,stroke:inkColor,'stroke-width':'0.4',opacity:s(op)}));
       });
-      // Light dot
-      frag.appendChild(el('circle', { cx:lightX, cy:lightY, r:'1.8', fill:inkColor, opacity:'0.2' }));
-      frag.appendChild(el('circle', { cx:lightX, cy:lightY, r:'7',   fill:'none', stroke:inkColor, 'stroke-width':'0.4', opacity:'0.07' }));
-      frag.appendChild(el('circle', { cx:lightX, cy:lightY, r:'18',  fill:'none', stroke:inkColor, 'stroke-width':'0.3', opacity:'0.035' }));
+      frag.appendChild(el('circle',{cx:lx,cy:ly,r:'1.8',fill:inkColor,opacity:'0.2'}));
+      frag.appendChild(el('circle',{cx:lx,cy:ly,r:'7',fill:'none',stroke:inkColor,'stroke-width':'0.4',opacity:'0.07'}));
+      frag.appendChild(el('circle',{cx:lx,cy:ly,r:'18',fill:'none',stroke:inkColor,'stroke-width':'0.3',opacity:'0.035'}));
       break;
     }
-
     case 'mirror': {
-      // Horizontal mirror axis, vertical lines above+below, ripple horizontals below, sun+reflection
-      const axisY = 360 + r() * 120;
-      frag.appendChild(el('line', { x1:0, y1:axisY, x2:W, y2:axisY, stroke:inkColor, 'stroke-width':'0.6', opacity:'0.1' }));
-      const sunX = 80 + r() * 230;
-      const sunY = 50 + r() * 80;
-      // Vertical lines above — converge toward axis
-      for (let i = 0; i < 8; i++) {
-        const x = 40 + i * 44;
-        const topY = sunY + r() * (axisY - sunY - 40);
-        frag.appendChild(el('line', { x1:x, y1:axisY, x2:x + (r()-0.5)*16, y2:topY, stroke:inkColor, 'stroke-width':'0.4', opacity:'0.05' }));
-        // Mirror below
-        const botY = axisY + (axisY - topY) * 0.75;
-        frag.appendChild(el('line', { x1:x, y1:axisY, x2:x + (r()-0.5)*12, y2:Math.min(botY, H-20), stroke:inkColor, 'stroke-width':'0.3', opacity:'0.03' }));
+      const axisY = 360+r()*120;
+      frag.appendChild(el('line',{x1:0,y1:axisY,x2:W,y2:axisY,stroke:inkColor,'stroke-width':'0.6',opacity:'0.1'}));
+      const sunX=80+r()*230, sunY=50+r()*80;
+      for(let i=0;i<8;i++){
+        const x=40+i*44, topY=sunY+r()*(axisY-sunY-40);
+        frag.appendChild(el('line',{x1:x,y1:axisY,x2:x+(r()-0.5)*16,y2:topY,stroke:inkColor,'stroke-width':'0.4',opacity:'0.05'}));
+        const botY=axisY+(axisY-topY)*0.75;
+        frag.appendChild(el('line',{x1:x,y1:axisY,x2:x+(r()-0.5)*12,y2:Math.min(botY,H-20),stroke:inkColor,'stroke-width':'0.3',opacity:'0.03'}));
       }
-      // Ripple horizontals below axis
-      for (let i = 1; i <= 5; i++) {
-        const y = axisY + i * (38 + r()*12);
-        if (y < H - 20) frag.appendChild(el('line', { x1:30, y1:y, x2:W-30, y2:y, stroke:inkColor, 'stroke-width':'0.3', opacity:s(0.032 - i*0.005) }));
+      for(let i=1;i<=5;i++){
+        const y=axisY+i*(38+r()*12);
+        if(y<H-20) frag.appendChild(el('line',{x1:30,y1:y,x2:W-30,y2:y,stroke:inkColor,'stroke-width':'0.3',opacity:s(Math.max(0.032-i*0.005,0.01))}));
       }
-      // Sun dot
-      frag.appendChild(el('circle', { cx:sunX, cy:sunY, r:'2',  fill:inkColor, opacity:'0.18' }));
-      frag.appendChild(el('circle', { cx:sunX, cy:sunY, r:'9',  fill:'none', stroke:inkColor, 'stroke-width':'0.4', opacity:'0.06' }));
-      frag.appendChild(el('circle', { cx:sunX, cy:sunY, r:'20', fill:'none', stroke:inkColor, 'stroke-width':'0.25', opacity:'0.03' }));
-      // Reflection dot
-      const refY = axisY + (axisY - sunY) * 0.8;
-      if (refY < H - 10) {
-        frag.appendChild(el('circle', { cx:sunX, cy:refY, r:'1.5', fill:inkColor, opacity:'0.07' }));
-        frag.appendChild(el('circle', { cx:sunX, cy:refY, r:'7',   fill:'none', stroke:inkColor, 'stroke-width':'0.3', opacity:'0.025' }));
+      frag.appendChild(el('circle',{cx:sunX,cy:sunY,r:'2',fill:inkColor,opacity:'0.18'}));
+      frag.appendChild(el('circle',{cx:sunX,cy:sunY,r:'9',fill:'none',stroke:inkColor,'stroke-width':'0.4',opacity:'0.06'}));
+      frag.appendChild(el('circle',{cx:sunX,cy:sunY,r:'20',fill:'none',stroke:inkColor,'stroke-width':'0.25',opacity:'0.03'}));
+      const refY=axisY+(axisY-sunY)*0.8;
+      if(refY<H-10){
+        frag.appendChild(el('circle',{cx:sunX,cy:refY,r:'1.5',fill:inkColor,opacity:'0.07'}));
+        frag.appendChild(el('circle',{cx:sunX,cy:refY,r:'7',fill:'none',stroke:inkColor,'stroke-width':'0.3',opacity:'0.025'}));
       }
       break;
     }
-
     case 'perspective': {
-      // Two lines converging to a vanishing point, cross-lines getting denser
-      const vpX = W * (0.35 + r() * 0.3);
-      const vpY = H * (0.25 + r() * 0.2);
-      frag.appendChild(el('line', { x1:0,   y1:H, x2:vpX, y2:vpY, stroke:inkColor, 'stroke-width':'0.6', opacity:'0.1' }));
-      frag.appendChild(el('line', { x1:W,   y1:H, x2:vpX, y2:vpY, stroke:inkColor, 'stroke-width':'0.6', opacity:'0.1' }));
-      // Cross-lines
-      const steps = [0.95, 0.88, 0.80, 0.71, 0.62, 0.52, 0.42];
-      steps.forEach((t, i) => {
-        const y = vpY + t * (H - vpY);
-        const lx = vpX - t * vpX;
-        const rx = vpX + t * (W - vpX);
-        const op = 0.065 - i * 0.007;
-        frag.appendChild(el('line', { x1:lx, y1:y, x2:rx, y2:y, stroke:inkColor, 'stroke-width':'0.35', opacity:s(Math.max(op,0.01)) }));
+      const vpX=W*(0.35+r()*0.3), vpY=H*(0.25+r()*0.2);
+      frag.appendChild(el('line',{x1:0,y1:H,x2:vpX,y2:vpY,stroke:inkColor,'stroke-width':'0.6',opacity:'0.1'}));
+      frag.appendChild(el('line',{x1:W,y1:H,x2:vpX,y2:vpY,stroke:inkColor,'stroke-width':'0.6',opacity:'0.1'}));
+      [0.95,0.88,0.80,0.71,0.62,0.52,0.42].forEach((t,i)=>{
+        const y=vpY+t*(H-vpY), lx=vpX-t*vpX, rx=vpX+t*(W-vpX);
+        frag.appendChild(el('line',{x1:lx,y1:y,x2:rx,y2:y,stroke:inkColor,'stroke-width':'0.35',opacity:s(Math.max(0.065-i*0.007,0.01))}));
       });
-      // VP dot
-      frag.appendChild(el('circle', { cx:vpX, cy:vpY, r:'1.2', fill:inkColor, opacity:'0.22' }));
-      frag.appendChild(el('circle', { cx:vpX, cy:vpY, r:'5',   fill:'none', stroke:inkColor, 'stroke-width':'0.3', opacity:'0.08' }));
+      frag.appendChild(el('circle',{cx:vpX,cy:vpY,r:'1.2',fill:inkColor,opacity:'0.22'}));
+      frag.appendChild(el('circle',{cx:vpX,cy:vpY,r:'5',fill:'none',stroke:inkColor,'stroke-width':'0.3',opacity:'0.08'}));
       break;
     }
-
     case 'grid': {
-      // Dot grid fading toward center
-      const cols = [24,60,96,132,168,204,240,276,312,348];
-      const rows = [60,120,180,600,660,720,780,830];
-      cols.forEach(cx => rows.forEach(cy => {
-        const dx = (cx - W/2) / (W/2);
-        const dy = (cy - H/2) / (H/2);
-        const dist = Math.sqrt(dx*dx + dy*dy);
-        const op = Math.max(0.01, 0.22 * dist - 0.02);
-        frag.appendChild(el('circle', { cx, cy, r:'0.9', fill:inkColor, opacity:s(op) }));
-      }));
-      // Frame lines
-      frag.appendChild(el('rect', { x:20, y:20, width:W-40, height:H-40, fill:'none', stroke:inkColor, 'stroke-width':'0.5', opacity:'0.06', rx:'2' }));
-      frag.appendChild(el('rect', { x:32, y:32, width:W-64, height:H-64, fill:'none', stroke:inkColor, 'stroke-width':'0.3', opacity:'0.03', rx:'1' }));
-      break;
-    }
-
-    case 'night': {
-      // Scattered small dots like stars/lights, denser at edges
-      for (let i = 0; i < 40; i++) {
-        const x = r() * W;
-        const y = r() * H;
-        const dx = (x - W/2) / (W/2);
-        const dy = (y - H/2) / (H/2);
-        const dist = Math.sqrt(dx*dx + dy*dy);
-        const op = 0.05 + dist * 0.18;
-        const rad = 0.6 + r() * 0.8;
-        frag.appendChild(el('circle', { cx:x, cy:y, r:String(rad), fill:inkColor, opacity:s(Math.min(op, 0.25)) }));
-      }
-      // A single brighter point
-      const bx = 60 + r() * 270, by = 60 + r() * 200;
-      frag.appendChild(el('circle', { cx:bx, cy:by, r:'2',  fill:inkColor, opacity:'0.28' }));
-      frag.appendChild(el('circle', { cx:bx, cy:by, r:'8',  fill:'none', stroke:inkColor, 'stroke-width':'0.35', opacity:'0.08' }));
-      frag.appendChild(el('circle', { cx:bx, cy:by, r:'20', fill:'none', stroke:inkColor, 'stroke-width':'0.2', opacity:'0.04' }));
-      break;
-    }
-
-    case 'silhouette': {
-      // Strong vertical line off-center, thin horizontal, diagonal accent
-      const vx = 80 + r() * 230;
-      frag.appendChild(el('line', { x1:vx, y1:0,   x2:vx, y2:H,   stroke:inkColor, 'stroke-width':'0.7', opacity:'0.1' }));
-      frag.appendChild(el('line', { x1:vx, y1:0,   x2:vx+6, y2:H, stroke:inkColor, 'stroke-width':'0.3', opacity:'0.04' }));
-      const hy = 200 + r() * 400;
-      frag.appendChild(el('line', { x1:0,  y1:hy,  x2:W,   y2:hy, stroke:inkColor, 'stroke-width':'0.4', opacity:'0.06' }));
-      // Light source behind (gegenlicht)
-      const lx = 20 + r() * (W-40), ly = 20 + r() * 120;
-      frag.appendChild(el('circle', { cx:lx, cy:ly, r:'3',  fill:inkColor, opacity:'0.14' }));
-      frag.appendChild(el('circle', { cx:lx, cy:ly, r:'14', fill:'none', stroke:inkColor, 'stroke-width':'0.35', opacity:'0.05' }));
-      frag.appendChild(el('circle', { cx:lx, cy:ly, r:'30', fill:'none', stroke:inkColor, 'stroke-width':'0.2', opacity:'0.025' }));
-      frag.appendChild(el('circle', { cx:lx, cy:ly, r:'60', fill:'none', stroke:inkColor, 'stroke-width':'0.15', opacity:'0.015' }));
-      break;
-    }
-
-    case 'frame': {
-      // Nested rectangles, slightly offset — window/door frame feel
-      const pad = [20, 36, 52, 72];
-      const opacities = [0.07, 0.05, 0.035, 0.02];
-      pad.forEach((p, i) => {
-        const shift = (r() - 0.5) * 6;
-        frag.appendChild(el('rect', {
-          x: p + shift, y: p,
-          width: W - p*2 - Math.abs(shift),
-          height: H - p*2,
-          fill:'none', stroke:inkColor,
-          'stroke-width': String(0.5 - i*0.07),
-          opacity: s(opacities[i]),
-          rx:'1'
-        }));
+      [24,60,96,132,168,204,240,276,312,348].forEach(cx=>{
+        [60,120,180,600,660,720,780,830].forEach(cy=>{
+          const dx=(cx-W/2)/(W/2), dy=(cy-H/2)/(H/2);
+          const dist=Math.sqrt(dx*dx+dy*dy);
+          const op=Math.max(0.01,0.22*dist-0.02);
+          frag.appendChild(el('circle',{cx,cy,r:'0.9',fill:inkColor,opacity:s(op)}));
+        });
       });
-      // Single vertical center line
-      frag.appendChild(el('line', { x1:W/2, y1:0, x2:W/2, y2:H, stroke:inkColor, 'stroke-width':'0.3', opacity:'0.04' }));
+      frag.appendChild(el('rect',{x:20,y:20,width:W-40,height:H-40,fill:'none',stroke:inkColor,'stroke-width':'0.5',opacity:'0.06',rx:'2'}));
+      frag.appendChild(el('rect',{x:32,y:32,width:W-64,height:H-64,fill:'none',stroke:inkColor,'stroke-width':'0.3',opacity:'0.03',rx:'1'}));
       break;
     }
-
+    case 'night': {
+      for(let i=0;i<40;i++){
+        const x=r()*W, y=r()*H;
+        const dx=(x-W/2)/(W/2), dy=(y-H/2)/(H/2);
+        const dist=Math.sqrt(dx*dx+dy*dy);
+        const op=Math.min(0.05+dist*0.18,0.25);
+        frag.appendChild(el('circle',{cx:x,cy:y,r:String(0.6+r()*0.8),fill:inkColor,opacity:s(op)}));
+      }
+      const bx=60+r()*270, by=60+r()*200;
+      frag.appendChild(el('circle',{cx:bx,cy:by,r:'2',fill:inkColor,opacity:'0.28'}));
+      frag.appendChild(el('circle',{cx:bx,cy:by,r:'8',fill:'none',stroke:inkColor,'stroke-width':'0.35',opacity:'0.08'}));
+      frag.appendChild(el('circle',{cx:bx,cy:by,r:'20',fill:'none',stroke:inkColor,'stroke-width':'0.2',opacity:'0.04'}));
+      break;
+    }
+    case 'silhouette': {
+      const vx=80+r()*230;
+      frag.appendChild(el('line',{x1:vx,y1:0,x2:vx,y2:H,stroke:inkColor,'stroke-width':'0.7',opacity:'0.1'}));
+      frag.appendChild(el('line',{x1:vx,y1:0,x2:vx+6,y2:H,stroke:inkColor,'stroke-width':'0.3',opacity:'0.04'}));
+      const hy=200+r()*400;
+      frag.appendChild(el('line',{x1:0,y1:hy,x2:W,y2:hy,stroke:inkColor,'stroke-width':'0.4',opacity:'0.06'}));
+      const lx=20+r()*(W-40), ly=20+r()*120;
+      [['3','0.14'],['14','0.05'],['30','0.025'],['60','0.015']].forEach(([rad,op])=>{
+        frag.appendChild(el('circle',{cx:lx,cy:ly,r:rad,fill:rad==='3'?inkColor:'none',stroke:rad==='3'?'none':inkColor,'stroke-width':'0.3',opacity:op}));
+      });
+      break;
+    }
+    case 'frame': {
+      [20,36,52,72].forEach((p,i)=>{
+        const shift=(r()-0.5)*6;
+        frag.appendChild(el('rect',{x:p+shift,y:p,width:W-p*2-Math.abs(shift),height:H-p*2,fill:'none',stroke:inkColor,'stroke-width':String(0.5-i*0.07),opacity:s([0.07,0.05,0.035,0.02][i]),rx:'1'}));
+      });
+      frag.appendChild(el('line',{x1:W/2,y1:0,x2:W/2,y2:H,stroke:inkColor,'stroke-width':'0.3',opacity:'0.04'}));
+      break;
+    }
     case 'scatter': {
-      // Random short lines — movement, gesture feel
-      for (let i = 0; i < 18; i++) {
-        const x = r() * W;
-        const y = r() * H;
-        const len = 12 + r() * 40;
-        const angle = r() * Math.PI * 2;
-        const x2 = x + Math.cos(angle) * len;
-        const y2 = y + Math.sin(angle) * len;
-        const op = 0.03 + r() * 0.06;
-        frag.appendChild(el('line', { x1:x, y1:y, x2, y2, stroke:inkColor, 'stroke-width':'0.4', opacity:s(op) }));
+      for(let i=0;i<18;i++){
+        const x=r()*W, y=r()*H, len=12+r()*40, angle=r()*Math.PI*2;
+        frag.appendChild(el('line',{x1:x,y1:y,x2:x+Math.cos(angle)*len,y2:y+Math.sin(angle)*len,stroke:inkColor,'stroke-width':'0.4',opacity:s(0.03+r()*0.06)}));
       }
-      // A few dots
-      for (let i = 0; i < 6; i++) {
-        frag.appendChild(el('circle', { cx:r()*W, cy:r()*H, r:String(0.7 + r()*0.8), fill:inkColor, opacity:s(0.08 + r()*0.08) }));
-      }
+      for(let i=0;i<6;i++) frag.appendChild(el('circle',{cx:r()*W,cy:r()*H,r:String(0.7+r()*0.8),fill:inkColor,opacity:s(0.08+r()*0.08)}));
       break;
     }
-
     case 'light': {
-      // Radiating lines from a point, like a bare bulb
-      const lx = 80 + r() * 230, ly = 60 + r() * 160;
-      const rayCount = 12;
-      for (let i = 0; i < rayCount; i++) {
-        const angle = (i / rayCount) * Math.PI * 2;
-        const len = 120 + r() * 300;
-        frag.appendChild(el('line', {
-          x1:lx, y1:ly,
-          x2: lx + Math.cos(angle) * len,
-          y2: ly + Math.sin(angle) * len,
-          stroke:inkColor, 'stroke-width':'0.35', opacity:'0.04'
-        }));
+      const lx=80+r()*230, ly=60+r()*160;
+      for(let i=0;i<12;i++){
+        const angle=(i/12)*Math.PI*2, len=120+r()*300;
+        frag.appendChild(el('line',{x1:lx,y1:ly,x2:lx+Math.cos(angle)*len,y2:ly+Math.sin(angle)*len,stroke:inkColor,'stroke-width':'0.35',opacity:'0.04'}));
       }
-      frag.appendChild(el('circle', { cx:lx, cy:ly, r:'2',  fill:inkColor, opacity:'0.22' }));
-      frag.appendChild(el('circle', { cx:lx, cy:ly, r:'10', fill:'none', stroke:inkColor, 'stroke-width':'0.4', opacity:'0.07' }));
-      frag.appendChild(el('circle', { cx:lx, cy:ly, r:'24', fill:'none', stroke:inkColor, 'stroke-width':'0.25', opacity:'0.04' }));
-      frag.appendChild(el('circle', { cx:lx, cy:ly, r:'50', fill:'none', stroke:inkColor, 'stroke-width':'0.15', opacity:'0.02' }));
+      frag.appendChild(el('circle',{cx:lx,cy:ly,r:'2',fill:inkColor,opacity:'0.22'}));
+      frag.appendChild(el('circle',{cx:lx,cy:ly,r:'10',fill:'none',stroke:inkColor,'stroke-width':'0.4',opacity:'0.07'}));
+      frag.appendChild(el('circle',{cx:lx,cy:ly,r:'24',fill:'none',stroke:inkColor,'stroke-width':'0.25',opacity:'0.04'}));
+      frag.appendChild(el('circle',{cx:lx,cy:ly,r:'50',fill:'none',stroke:inkColor,'stroke-width':'0.15',opacity:'0.02'}));
       break;
     }
-
     case 'warm_lines': {
-      // Gentle diagonal lines — like warm light through blinds
-      const angle = 0.18 + r() * 0.12;
-      const gap = 48 + r() * 28;
-      for (let i = 0; i < 14; i++) {
-        const offset = i * gap - 200;
-        const op = 0.02 + (i % 3 === 0 ? 0.025 : 0);
-        frag.appendChild(el('line', {
-          x1: offset, y1: 0,
-          x2: offset + H * Math.tan(angle), y2: H,
-          stroke:inkColor, 'stroke-width':'0.5', opacity:s(op)
-        }));
+      const angle=0.18+r()*0.12, gap=48+r()*28;
+      for(let i=0;i<14;i++){
+        const offset=i*gap-200, op=0.02+(i%3===0?0.025:0);
+        frag.appendChild(el('line',{x1:offset,y1:0,x2:offset+H*Math.tan(angle),y2:H,stroke:inkColor,'stroke-width':'0.5',opacity:s(op)}));
       }
-      // Small warm dot
-      const dx = 60 + r() * 270, dy = 60 + r() * 160;
-      frag.appendChild(el('circle', { cx:dx, cy:dy, r:'1.5', fill:inkColor, opacity:'0.16' }));
-      frag.appendChild(el('circle', { cx:dx, cy:dy, r:'7',   fill:'none', stroke:inkColor, 'stroke-width':'0.3', opacity:'0.05' }));
+      const dx=60+r()*270, dy=60+r()*160;
+      frag.appendChild(el('circle',{cx:dx,cy:dy,r:'1.5',fill:inkColor,opacity:'0.16'}));
+      frag.appendChild(el('circle',{cx:dx,cy:dy,r:'7',fill:'none',stroke:inkColor,'stroke-width':'0.3',opacity:'0.05'}));
       break;
     }
-
     case 'soft_grid': {
-      // Very faint regular grid — calm, diffuse feel
-      const gapX = 44, gapY = 44;
-      for (let x = gapX; x < W; x += gapX) {
-        frag.appendChild(el('line', { x1:x, y1:0, x2:x, y2:H, stroke:inkColor, 'stroke-width':'0.3', opacity:'0.03' }));
-      }
-      for (let y = gapY; y < H; y += gapY) {
-        frag.appendChild(el('line', { x1:0, y1:y, x2:W, y2:y, stroke:inkColor, 'stroke-width':'0.3', opacity:'0.025' }));
-      }
+      for(let x=44;x<W;x+=44) frag.appendChild(el('line',{x1:x,y1:0,x2:x,y2:H,stroke:inkColor,'stroke-width':'0.3',opacity:'0.03'}));
+      for(let y=44;y<H;y+=44) frag.appendChild(el('line',{x1:0,y1:y,x2:W,y2:y,stroke:inkColor,'stroke-width':'0.3',opacity:'0.025'}));
       break;
     }
-
-    case 'minimal':
-    default: {
-      // Almost nothing — just a single thin horizontal line and one dot
-      const y = H * (0.55 + r() * 0.2);
-      frag.appendChild(el('line', { x1:40, y1:y, x2:W-40, y2:y, stroke:inkColor, 'stroke-width':'0.4', opacity:'0.06' }));
-      const dx = 60 + r() * 270, dy = 60 + r() * 160;
-      frag.appendChild(el('circle', { cx:dx, cy:dy, r:'1.2', fill:inkColor, opacity:'0.12' }));
+    default: { // minimal
+      const y=H*(0.55+r()*0.2);
+      frag.appendChild(el('line',{x1:40,y1:y,x2:W-40,y2:y,stroke:inkColor,'stroke-width':'0.4',opacity:'0.06'}));
+      frag.appendChild(el('circle',{cx:60+r()*270,cy:60+r()*160,r:'1.2',fill:inkColor,opacity:'0.12'}));
       break;
     }
   }
@@ -816,15 +948,15 @@ function buildGraphic(type, seed, inkColor) {
 // ═══════════════════════════════════════════════════════════════════════════
 
 function generateToday() {
-  const seed    = getViennaDateString();
-  const subject = saltedPick(subjects,     seed, 'subject');
-  const lighting= saltedPick(lightings,    seed, 'lighting');
-  const persp   = saltedPick(perspectives, seed, 'perspective');
-  const comp    = saltedPick(compositions, seed, 'composition');
-  const refl    = saltedPick(reflections,  seed, 'reflection');
-  const quote   = saltedPick(quotes,       seed, 'quote');
-  const tmpl    = saltedPick(templates,    seed, 'template');
-  const gtype   = getGraphicType(subject, lighting.phrase);
+  const seed     = getViennaDateString();
+  const subject  = saltedPick(subjects,     seed, 'subject');
+  const lighting = saltedPick(lightings,    seed, 'lighting');
+  const persp    = saltedPick(perspectives, seed, 'perspective');
+  const comp     = saltedPick(compositions, seed, 'composition');
+  const refl     = saltedPick(reflections,  seed, 'reflection');
+  const quote    = saltedPick(quotes,       seed, 'quote');
+  const tmpl     = saltedPick(templates,    seed, 'template');
+  const gtype    = getGraphicType(subject, lighting.phrase);
   return { sentence: tmpl(subject, lighting.phrase, persp, comp), refl, quote, mood: lighting.mood, seed, gtype };
 }
 
@@ -859,11 +991,12 @@ function formatTimer(t) {
 
 function formatDateLabel(seed) {
   const [y,mo,d] = seed.split('-').map(Number);
-  const months=["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+  const months = ["Januar","Februar","März","April","Mai","Juni",
+                  "Juli","August","September","Oktober","November","Dezember"];
   return `${d}. ${months[mo-1]} ${y}`;
 }
 
-// ── DOM ───────────────────────────────────────────────────────────────────────
+// ── DOM refs ──────────────────────────────────────────────────────────────────
 const $prompt    = document.getElementById('prompt');
 const $refl      = document.getElementById('reflection');
 const $qText     = document.getElementById('quote-text');
@@ -872,32 +1005,49 @@ const $timer     = document.getElementById('timer');
 const $dateLbl   = document.getElementById('date-label');
 const $wrap      = document.getElementById('prompt-wrap');
 const $bgLayer   = document.getElementById('bg-layer');
+const $overlay   = document.getElementById('impressum-overlay');
+const $impBtn    = document.getElementById('impressum-link');
+const $closeBtn  = document.getElementById('impressum-close');
 
 function nl2br(str) { return str.split('\n').join('<br>'); }
 
-function applyMoodColors(mood) {
+function applyMood(mood) {
   const bg  = moodBg[mood]  || moodBg.neutral;
   const ink = moodInk[mood] || moodInk.neutral;
   document.body.style.background = bg;
   document.documentElement.style.background = bg;
-  // Update CSS variables for text color consistency
-  document.documentElement.style.setProperty('--ink',   ink);
-  document.documentElement.style.setProperty('--muted', ink.replace('1C','6B').replace('17','65').replace('28','28'));
+  document.documentElement.style.setProperty('--ink', ink);
 }
 
 function render(data) {
-  $prompt.innerHTML = nl2br(data.sentence);
-  $refl.innerHTML   = nl2br(data.refl);
-  $qText.innerHTML  = nl2br(data.quote.text);
-  $qAuth.textContent = data.quote.author;
+  $prompt.innerHTML   = nl2br(data.sentence);
+  $refl.innerHTML     = nl2br(data.refl);
+  $qText.innerHTML    = nl2br(data.quote.text);
+  $qAuth.textContent  = data.quote.author;
   $dateLbl.textContent = formatDateLabel(data.seed);
-  applyMoodColors(data.mood);
-
-  // Rebuild SVG graphic
+  applyMood(data.mood);
   const ink = moodInk[data.mood] || moodInk.neutral;
   while ($bgLayer.firstChild) $bgLayer.removeChild($bgLayer.firstChild);
   $bgLayer.appendChild(buildGraphic(data.gtype, data.seed, ink));
 }
+
+// ── Impressum open/close ──────────────────────────────────────────────────────
+$impBtn.addEventListener('click', () => {
+  $overlay.classList.add('visible');
+  $overlay.scrollTop = 0;
+  document.body.style.overflow = 'hidden';
+});
+$closeBtn.addEventListener('click', () => {
+  $overlay.classList.remove('visible');
+  document.body.style.overflow = '';
+});
+// Close on Escape
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && $overlay.classList.contains('visible')) {
+    $overlay.classList.remove('visible');
+    document.body.style.overflow = '';
+  }
+});
 
 // ── Tick ──────────────────────────────────────────────────────────────────────
 let lastSeed = null;
